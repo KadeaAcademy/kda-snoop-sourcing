@@ -32,18 +32,16 @@ export const sendEmail = async (emailData: sendEmailData) => {
   await transporter.sendMail({ ...emailDefaults, ...emailData });
 };
 
-export const sendVerificationEmail = async (user, url) => {
+export const sendVerificationEmail = async (user) => {
   const token = createToken(user.id, user.email, {
     expiresIn: "1d",
-  });
+  })
   const verifyLink = `${
     serverRuntimeConfig.nextauthUrl
   }/auth/verify?token=${encodeURIComponent(token)}`;
   const verificationRequestLink = `${
     serverRuntimeConfig.nextauthUrl
-  }/auth/verification-requested?email=${encodeURIComponent(
-    user.email,
-  )}&callbackUrl=${encodeURIComponent(url)}`;
+  }/auth/verification-requested?email=${encodeURIComponent(user.email)}`;
   await sendEmail({
     to: user.email,
     subject: "Bienvenue sur le site de KDA Sourcing",
