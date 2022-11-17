@@ -40,14 +40,13 @@ export const createUser = async (
   }
 };
 
-export const resendVerificationEmail = async (email, callbackUrl) => {
+export const resendVerificationEmail = async (email) => {
   try {
     const res = await fetch(`/api/public/users/verification-email`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email,
-        callbackUrl,
       }),
     });
     if (res.status !== 200) {
