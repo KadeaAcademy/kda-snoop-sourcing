@@ -1,3 +1,4 @@
+import { handleAirtable } from "../components/pipelines/airtable";
 import { handleWebhook } from "../components/pipelines/webhook";
 import { capturePosthogEvent } from "./posthog";
 import { prisma } from "./prisma";
@@ -35,6 +36,7 @@ export const validateEvents = (
 };
 
 export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
+  let userOpenFormSession = null;
   // save submission
   if (event.type === "pageSubmission") {
     const data = event.data;
@@ -108,7 +110,7 @@ export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
   } else if (event.type === "formOpened") {
     // check if usr  opened form
 
-    const userOpenFormSession = await prisma.sessionEvent.findFirst({
+    userOpenFormSession = await prisma.sessionEvent.findFirst({
       where: {
         type: "formOpened",
         AND: [
@@ -144,29 +146,6 @@ export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
           submissionSession: { connect: { id } },
         },
       });
-
-      const AirTableWebHookUrl =
-        "https://hooks.airtable.com/workflows/v1/genericWebhook/appnpFoUWta1bO8qO/wflCFELZBnxLcKscw/wtrVFR0suVEmTvtth";
-      //hooks.airtable.com/workflows/v1/genericWebhook/apppuQjFjI40Be59U/wfleK3bmDupIoxGK3/wtrn9KQ7siOlZBiYn
-      const AirtableData = {
-        FirstName: event.data.user.firstname,
-        LastName: event.data.user.lastname,
-        Gender: event.data.user.gender,
-        Email: event.data.user.email,
-        TrainingSession: event.data.form.name,
-      };
-
-      const response = await fetch(AirTableWebHookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(AirtableData),
-      });
-
-      console.log(AirtableData);
-
-      console.log(event);
     }
   } else {
     throw Error(
@@ -185,9 +164,16 @@ export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
       },
     ],
   });
+
   for (const pipeline of pipelines) {
     if (pipeline.type === "WEBHOOK") {
       handleWebhook(pipeline, event);
+    } else if (pipeline.type === "AIRTABLE") {
+      if (event.type !== "formOpened") {
+        handleAirtable(pipeline, event);
+      } else if (event.type === "formOpened" && userOpenFormSession === null) {
+        handleAirtable(pipeline, event);
+      }
     }
   }
 };
