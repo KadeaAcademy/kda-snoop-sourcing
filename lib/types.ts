@@ -1,3 +1,5 @@
+import { Form as PrismaForm } from "@prisma/client";
+import { User } from "next-auth";
 import { JSXElementConstructor, ReactElement, ReactFragment } from "react";
 
 export type Form = {
@@ -146,8 +148,8 @@ export type openFormEvent = {
   createdAt?: Date;
   updatedAt?: Date;
   data: {
-    formId: string;
-    userId: number;
+    form: PrismaForm;
+    user: User;
     roll: number;
   };
 };

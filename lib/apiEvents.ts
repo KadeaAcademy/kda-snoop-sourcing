@@ -127,6 +127,7 @@ export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
         ],
       },
     });
+
     if (userOpenFormSession === null) {
       const { id } = await prisma.submissionSession.create({
         data: { form: { connect: { id: formId } } },
@@ -143,6 +144,29 @@ export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
           submissionSession: { connect: { id } },
         },
       });
+
+      const AirTableWebHookUrl =
+        "https://hooks.airtable.com/workflows/v1/genericWebhook/appnpFoUWta1bO8qO/wflCFELZBnxLcKscw/wtrVFR0suVEmTvtth";
+      //hooks.airtable.com/workflows/v1/genericWebhook/apppuQjFjI40Be59U/wfleK3bmDupIoxGK3/wtrn9KQ7siOlZBiYn
+      const AirtableData = {
+        FirstName: event.data.user.firstname,
+        LastName: event.data.user.lastname,
+        Gender: event.data.user.gender,
+        Email: event.data.user.email,
+        TrainingSession: event.data.form.name,
+      };
+
+      const response = await fetch(AirTableWebHookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(AirtableData),
+      });
+
+      console.log(AirtableData);
+
+      console.log(event);
     }
   } else {
     throw Error(
