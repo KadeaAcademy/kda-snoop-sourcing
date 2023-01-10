@@ -48,7 +48,8 @@ export default function NewFormModal({
       name,
       dueDate: new Date(dueDate),
       description,
-      place: selectedPlace.name,
+      place: location,
+      formation: formation,
       answeringOrder,
     });
 

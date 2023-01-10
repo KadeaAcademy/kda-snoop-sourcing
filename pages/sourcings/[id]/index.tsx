@@ -14,7 +14,11 @@ import usePages from "../../../hooks/usePages";
 import LimitedWidth from "../../../components/layout/LimitedWidth";
 import DisclaimerModal from "../../../components/form/DisclaimerModal";
 import { isTimedPage } from "../../../lib/utils";
-import { CheckCircleIcon, InboxArrowDownIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import {
+  CheckCircleIcon,
+  InboxArrowDownIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 import { FormOrder } from "@prisma/client";
 
 const { publicRuntimeConfig } = getConfig();
@@ -32,6 +36,7 @@ function NoCodeFormPublic() {
   } = useNoCodeFormPublic(formId);
 
   const [openDisclaimer, setOpenDisclaimer] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
   const [pageIdOnModal, setPageIdOnModal] = useState("");
   const [roll, setRoll] = useState();
 
@@ -93,13 +98,17 @@ function NoCodeFormPublic() {
     }
     return true;
   };
-  // nothing important
 
   const handleClickAction = (page, fromModal: Boolean = false) => {
     if (!fromModal) {
       if (isTimedPage(page)) {
         setOpenDisclaimer(true);
         setPageIdOnModal(page.id);
+        setModalMessage(
+          `Vous êtes sur le point de commencer un formulaire chronométré et vous disposez de ${getPageTimer(
+            page.blocks
+          )} minutes pour remplir ce formulaire. Une fois commencé, vous ne pouvez plus quitter le formulaire, sous peine de voir vos réponses considérées comme soumises.`
+        );
       } else router.push(`/sourcings/${formId}/${page.id}`);
     } else {
       router.push(`/sourcings/${formId}/${pageIdOnModal}`);
@@ -152,9 +161,6 @@ function NoCodeFormPublic() {
               <h1 className="text-2xl mt-10 mb-10 ml-12 mx-auto font-bold  max-sm:ml-6 max-md:ml-6 max-sm:mt-8 max-md:mb-8">
                 {noCodeForm.form.name}
               </h1>
-              <p className="text-lg mb-3 ml-12  mr-11 max-sm:ml-6 max-md:ml-6">
-                {noCodeForm.form.description}
-              </p>
               <p className="flex items-center text-sm mb-10 ml-12 mx-auto max-sm:ml-6 max-md:ml-6">
                 <CalendarDaysIcon className="w-6 h-6 stroke-thin mr-2" />
                 <span className="font-bold mr-1">Date limite : </span>
@@ -227,15 +233,15 @@ function NoCodeFormPublic() {
                           </button>
                         )}
                       </div>
-                      <DisclaimerModal
-                        open={openDisclaimer}
-                        setOpen={setOpenDisclaimer}
-                        message={`Vous êtes sur le point de commencer un formulaire chronométré et vous disposez de ${page.blocks[1].data.timerDuration} minutes pour remplir ce formulaire. Une fois commencé, vous ne pouvez plus quitter le formulaire, sous peine de voir vos réponses considérées comme soumises.`}
-                        onClick={() => handleClickAction(page, true)}
-                      />
                     </div>
                   );
               })}
+              <DisclaimerModal
+                open={openDisclaimer}
+                setOpen={setOpenDisclaimer}
+                message={modalMessage}
+                onClick={() => handleClickAction(null, true)}
+              />
             </div>
           )}
           {(publicPrivacyUrl || publicImprintUrl) && (

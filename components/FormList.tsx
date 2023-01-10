@@ -23,12 +23,18 @@ import { timeSince } from "../lib/utils";
 import SearchBar from "./form/SearchBar";
 
 import { fr } from "date-fns/locale";
+import { SourcingFormations, SourcingLocations } from "../lib/enums";
 
 export default function FormList() {
   const { forms, mutateForms } = useForms();
   const [openNewFormModal, setOpenNewFormModal] = useState(false);
   const [queryValue, setQueryValue] = useState("");
   const [formData, setFormData] = useState({});
+  const [filteredData, setFilteredData] = useState(forms);
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [selectedFormation, setSelectedFormation] = useState("");
+
+
   const { data: session } = useSession({
     required: true,
     onUnauthenticated() {
@@ -37,12 +43,45 @@ export default function FormList() {
     },
   });
 
+  useEffect(() => {
+    let filtering = filterByLocation(forms);
+    filtering = filterByFormation(filtering);
+    setFilteredData(filtering);
+  }, [selectedFormation, selectedLocation, forms]);
+
   const dateDayDiff = (date) => {
     const today = new Date();
     const dueDate = new Date(date);
     var total_seconds = Math.abs(+dueDate - +today) / 1000;
     var days_difference = Math.floor(total_seconds / (60 * 60 * 24));
     return days_difference;
+  };
+
+  const filterByLocation = (filteredList) => {
+    // Avoid filter for empty string
+    if (!selectedLocation) {
+      return filteredList;
+    }
+
+    const filteredData = filteredList.filter(
+      (card) => card.place.split(" ").indexOf(selectedLocation) !== -1
+    );
+    return filteredData;
+  };
+  const filterByFormation = (filteredList) => {
+    // Avoid filter for empty string
+    return !selectedFormation
+      ? filteredList
+      : filteredList.filter(
+          (card) => card.formation.split(" ").indexOf(selectedFormation) !== -1
+        );
+  };
+
+  const handleChangeLocation = (event) => {
+    setSelectedLocation(event.target.value);
+  };
+  const handleChangeFormation = (event) => {
+    setSelectedFormation(event.target.value);
   };
 
   const newForm = async () => {
@@ -78,6 +117,17 @@ export default function FormList() {
     } catch (error) {
       console.error(error);
     }
+    
+  };
+
+  const filterSourcings = (button) => {
+    if (button === "RESET") {
+      setFilteredData(forms);
+      setSelectedFormation("");
+      setSelectedLocation("");
+      return;
+    }
+
   };
 
   return (
@@ -94,13 +144,51 @@ export default function FormList() {
         <></>
       )}
       <div className="h-full px-6 py-8">
-        {forms &&
-          (forms.length === 0 ? (
+        <div className="mb-10">
+          {session.user.role !== UserRole.ADMIN ? (
+            <div className="flex flex-row">
+              <select
+                className="flex justify-center text-sm font-medium text-black py-1 px-1 md:py-2 md:px-10 rounded-md shadow-sm border border-gray-300 bg-white rounded-md hover:border hover:border-black mr-1"
+                value={selectedLocation}
+                onChange={handleChangeLocation}
+              >
+                <option value="">LIEU</option>
+                {SourcingLocations.map((city, cityIndex) => (
+                  <option key={cityIndex} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="flex justify-center text-sm font-medium text-black py-1 px-6 md:py-2 md:px-10 rounded-md shadow-sm border border-gray-300 bg-white rounded-md hover:border hover:border-black mx-1"
+                value={selectedFormation}
+                onChange={handleChangeFormation}
+              >
+                <option value="">FORMATION</option>
+                {SourcingFormations.map((formation, formationIndex) => (
+                  <option key={formationIndex} value={formation}>
+                    {formation}
+                  </option>
+                ))}
+              </select>
+              <button
+                className="flex justify-center text-sm font-medium py-2 px-2 md:py-2 md:px-10 rounded-md shadow-sm focus:outline-none focus:ring-2 bg-snoopfade text-white focus:ring-offset-2 focus:ring-red-500 mx-1"
+                onClick={() => filterSourcings("RESET")}
+              >
+                RESET
+              </button>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+        {filteredData &&
+          (filteredData.length === 0 ? (
             <div className="mt-5 text-center">
               {session.user.role !== UserRole.ADMIN ? (
                 <EmptyPageFiller
-                  alertText="Vous n'avez pas encore de sourcing."
-                  hintText="Attendez que le sourcing soit créé"
+                  alertText="Aucune session d'inscription trouvée."
+                  hintText=""
                   borderStyles="border-4 border-dotted border-red"
                 >
                   <FolderOpenIcon className="w-24 h-24 mx-auto text-ui-gray-medium stroke-thin" />
@@ -137,8 +225,8 @@ export default function FormList() {
               {forms
                 .sort((a, b) => b.updatedAt - a.updatedAt)
                 .map((form, formIdx) => (
-                  <li key={form.id} className="relative h-56 col-span-1 ">
-                    <div className="flex flex-col justify-between h-full bg-white rounded shadow">
+                  <li key={form.id} className="relative h-56 col-span-1">
+                    <div className="flex flex-col justify-between h-full border border-gray-300 bg-white rounded-md hover:border hover:border-black">
                       <div className="p-6">
                         <p className="text-lg line-clamp-3">{form.name}</p>
                       </div>
@@ -163,7 +251,8 @@ export default function FormList() {
                             }
                           />
                           {format(new Date(form.dueDate), "yyyy-MM-dd") ===
-                          format(new Date(), "yyyy-MM-dd", { locale: fr }) ? (
+
+                          format(new Date(), "yyyy-MM-dd") ? (
                             <span className="text-xs font-bold text-red-800 line-clamp-3">
                               ferme aujourd&apos;hui
                             </span>
@@ -175,10 +264,8 @@ export default function FormList() {
                             </span>
                           ) : (
                             <span className="text-xs font-bold text-rose-500 line-clamp-3">
-                              {format(new Date(form.dueDate), "dd MMMM yyyy", {
-                                locale: fr,
-                              }) <
-                              format(new Date(), "dd MMMM yyyy", { locale: fr })
+                              {format(new Date(form.dueDate), "yyyy-MM-dd") <
+                              format(new Date(), "yyyy-MM-dd")
                                 ? "fermé"
                                 : "ferme"}{" "}
                               {timeSince(form.dueDate)}
