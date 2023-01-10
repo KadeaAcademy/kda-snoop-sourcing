@@ -1,5 +1,4 @@
 import { Pipeline, Prisma } from "@prisma/client";
-import crypto from "crypto";
 import { ApiEvent } from "../../../lib/types";
 
 const sendData = async (pipeline: Pipeline, event: ApiEvent) => {
@@ -19,8 +18,6 @@ const sendData = async (pipeline: Pipeline, event: ApiEvent) => {
 };
 
 export async function handleAirtable(pipeline: Pipeline, event: ApiEvent) {
-  console.log(pipeline);
-
   if (pipeline.data.hasOwnProperty("endpointUrl")) {
     if (
       event.type === "pageSubmission" &&
