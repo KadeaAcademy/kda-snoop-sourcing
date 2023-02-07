@@ -15,7 +15,7 @@ export default async function handle(
     const form = await prisma.noCodeForm.findUnique({
       where: {
         formId: formId,
-      },
+    },
       select: {
         id: true,
         form: {
