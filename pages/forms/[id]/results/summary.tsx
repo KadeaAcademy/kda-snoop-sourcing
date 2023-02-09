@@ -21,10 +21,9 @@ function ResultsSummaryPage() {
   const { form, isLoadingForm, isErrorForm } = useForm(formId);
   const formMenuSteps = useFormMenuSteps(formId);
   const formResultsSecondNavigation = useFormResultsSecondNavigation(formId);
-  const [start, setStart] = useState(new Date(form.createdAt));
-  const [end, setEnd] = useState(new Date(form.dueDate));
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  console.log({ form });
   if (isLoadingForm) {
     return <Loading />;
   }
@@ -48,43 +47,41 @@ function ResultsSummaryPage() {
       />
 
       <LimitedWidth>
-        <div className='flex-col mt-8  p-4 border w-2/3 rounded-sm'>
+        <div className='flex-col mt-8   p-4 border w-2/3 rounded-sm'>
           <p className='mb-2'>Filtre</p>
           <div className='flex items-center'>
             <div className='mr-2 '>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={start}
+                  value={startDate || new Date(form?.createdAt)}
                   onChange={(newValue) => {
-                    setStart(newValue);
+                    setStartDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </div>
-
-            <p>Au</p>
+            <p className='m-4'>Au</p>
             <div className='ml-2'>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={end}
+                  value={endDate || new Date(form?.dueDate)}
                   onChange={(newValue) => {
-                    setEnd(newValue);
+                    setEndDate(newValue);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
             </div>
-            <button
-              className='ml-6 bg-red-400 py-4 px-2 rounded-sm text-white'
-              type='button'
-            >
-              APPLIQUER
-            </button>
           </div>
         </div>
-
-        <ResultsSummary formId={formId} />
+        {form && (
+          <ResultsSummary
+            formId={formId}
+            startDate={startDate || new Date(form?.createdAt)}
+            endDate={endDate || new Date(form?.dueDate)}
+          />
+        )}
       </LimitedWidth>
     </BaseLayoutManagement>
   );

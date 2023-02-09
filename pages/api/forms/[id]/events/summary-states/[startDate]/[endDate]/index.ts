@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
-import { prisma } from "../../../../../lib/prisma";
+import { prisma } from "../../../../../../../../lib/prisma";
 
 export default async function handle(
   req: NextApiRequest,
@@ -14,6 +14,8 @@ export default async function handle(
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
   const formId = req.query.id.toString();
+  const startDate = req.query.startDate.toString();
+  const endDate = req.query.endDate.toString();
   const session = await getSession({ req: req });
 
   // GET /api/forms/[formId]/events/summary-stats
@@ -35,9 +37,11 @@ export default async function handle(
             },
           },
              
+          { createdAt: { lte: new Date(endDate), gte: new Date(startDate) } },
         ],
       },
     });
+
 
     const cSubmissions = await prisma.sessionEvent.findMany({
       select: {
@@ -52,7 +56,9 @@ export default async function handle(
               equals: formId,
             },
           },
+          { createdAt: { lte: new Date(endDate), gte: new Date(startDate) } },
         ],
+        
       },
     });
     const countSubmitted = new Set(
@@ -71,8 +77,10 @@ export default async function handle(
               equals: formId,
             },
           },
+          { createdAt: { lte: new Date(endDate), gte: new Date(startDate) } },
         ],
       },
+      
     });
     let pages = {};
     cPageSubmission.map((s) => {

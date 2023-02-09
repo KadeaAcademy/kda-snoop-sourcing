@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
-import { prisma } from "../../../../../lib/prisma";
 
 export default async function handle(
   req: NextApiRequest,
@@ -13,7 +12,9 @@ export default async function handle(
     origin: "*",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
+  console.log({query:req})
   const formId = req.query.id.toString();
+  // const startDate = req.query.id.toString();
   const session = await getSession({ req: req });
 
   // GET /api/forms/[formId]/events/summary-stats
@@ -35,6 +36,8 @@ export default async function handle(
             },
           },
              
+          { updatedAt: { lte: new Date() } },
+          { updatedAt: { gte: new Date() } },
         ],
       },
     });

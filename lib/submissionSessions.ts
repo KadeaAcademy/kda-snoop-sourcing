@@ -15,12 +15,20 @@ export const useSubmissionSessions = (formId: string) => {
   };
 };
 
-export const getFormSummaryStats = async (formId: string) => {
+export const getFormSummaryStats = async (
+  formId: string,
+  startDate: Date,
+  endDate: Date
+) => {
   try {
     let stats = null;
-    await fetch(`/api/forms/${formId}/events/summary-stats`, {
-      method: "GET",
-    })
+    // /api/forms/${formId}/events/summary-stats
+    await fetch(
+      `/api/forms/${formId}/events/summary-states/${startDate}/${endDate}`,
+      {
+        method: "GET",
+      }
+    )
       .then((r) => r.json())
       .then((d) => {
         stats = d;
@@ -32,10 +40,15 @@ export const getFormSummaryStats = async (formId: string) => {
   }
 };
 
-export const getPageQuestionsStats = async (formId: string, pageId: string) => {
+export const getPageQuestionsStats = async (
+  formId: string,
+  pageId: string,
+  startDate: Date,
+  endDate: Date
+) => {
   try {
     const stats = await fetch(
-      `/api/forms/${formId}/events/${pageId}/question-stats`,
+      `/api/forms/${formId}/events/${pageId}/question-stats/${startDate}/${endDate}`,
       {
         method: "GET",
       }

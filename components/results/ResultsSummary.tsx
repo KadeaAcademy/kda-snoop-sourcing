@@ -12,23 +12,25 @@ type SummaryStatsType = {
   pages: any;
 } | null;
 
-export default function ResultsSummary({ formId }) {
+export default function ResultsSummary({ formId, startDate, endDate }) {
   const [summaryStats, setSummaryStats] = useState<SummaryStatsType>(null);
 
   useEffect(() => {
     (async () => {
-      const data = await getFormSummaryStats(formId);
+      const data = await getFormSummaryStats(formId, startDate, endDate);
       if (data) setSummaryStats(data);
     })();
-  }, []);
+  }, [startDate, endDate]);
 
   const { form, isLoadingForm } = useForm(formId);
   const [formBlocks, setFormBlocks] = useState([]);
+  const [isFormBlocksLoading, setIsFormBlocksLoading] = useState(true);
   const getFormQuestions = (page) => {
     return page.blocks.filter((b) => isBlockAQuestion(b));
   };
 
   const getNocodeFormBlocks = async () => {
+    setIsFormBlocksLoading(true);
     try {
       const progress = await fetch(`/api/public/forms/${form.id}/nocodeform`, {
         method: "GET",
@@ -39,12 +41,13 @@ export default function ResultsSummary({ formId }) {
       }
       const data = await progress.json();
       setFormBlocks(data?.form?.blocks);
-    } catch (error) {}
+    setIsFormBlocksLoading(false);
+  } catch (error) {}
   };
 
   useEffect(() => {
     getNocodeFormBlocks();
-  }, []);
+  }, [startDate, endDate]);
 
   const pages = usePages({ blocks: formBlocks, formId });
 
@@ -78,16 +81,16 @@ export default function ResultsSummary({ formId }) {
     // },
   ];
 
-  if (!summaryStats) {
+  if (!summaryStats || isFormBlocksLoading) {
     return <Loading />;
   }
 
   return (
     <>
-      <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
+      <h2 className='mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4'>
         General report
       </h2>
-      <dl className="grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2">
+      <dl className='grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2'>
         {defaultInsights.map((item) => (
           <AnalyticsCard
             key={item.id}
@@ -105,11 +108,11 @@ export default function ResultsSummary({ formId }) {
         ))}
       </dl>
 
-      <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
+      <h2 className='mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4'>
         Diférentes étapes
       </h2>
-      <dl className="grid  gap-5 mt-8 mb-12 ">
-        {pages.slice(0, pages.length-1).map((page) => (
+      <dl className='grid  gap-5 mt-8 mb-12 '>
+        {pages.slice(0, pages.length - 1).map((page) => (
           <AnalyticsCard
             key={page.id}
             value={`${summaryStats?.pages[page.id]} candidats ont répondus`}
@@ -120,6 +123,8 @@ export default function ResultsSummary({ formId }) {
             questions={getFormQuestions(page)}
             formId={formId}
             pageId={page.id}
+            startDate={startDate}
+            endDate={endDate}
           />
         ))}
       </dl>
