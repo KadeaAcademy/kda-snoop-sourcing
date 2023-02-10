@@ -51,14 +51,14 @@ export default function ResultsSummary({ formId }) {
   const defaultInsights = [
     {
       id: "totalCandidateOpenedForm",
-      name: "Nombre de candidats ayant vu",
+      name: "Ont ouvert le formulaire",
       stat: summaryStats ? summaryStats.opened : 0,
       trend: undefined,
       toolTipText: undefined,
     },
     {
       id: "totalCandidateSubmited",
-      name: "Nombre de candidats ayant soumis",
+      name: "ont soumis au moins une etape",
       stat: summaryStats
         ? `${summaryStats.submitted} (${Math.round(
             (summaryStats.submitted / summaryStats.opened) * 100
@@ -85,7 +85,7 @@ export default function ResultsSummary({ formId }) {
   return (
     <>
       <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
-        General report
+        Rapport général
       </h2>
       <dl className="grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2">
         {defaultInsights.map((item) => (
@@ -106,7 +106,7 @@ export default function ResultsSummary({ formId }) {
       </dl>
 
       <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
-        Diférentes étapes
+        Différentes étapes
       </h2>
       <dl className="grid  gap-5 mt-8 mb-12 ">
         {pages.slice(0, pages.length-1).map((page) => (
