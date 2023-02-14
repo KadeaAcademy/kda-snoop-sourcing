@@ -96,7 +96,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
             key={item.id}
             value={
               item.type === "page"
-                ? `${item.stat} candidats ont répondus`
+                ? `${item.stat || 0} candidats ont répondus`
                 : item.stat
             }
             label={item.name}
@@ -115,7 +115,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
         {pages.slice(0, pages.length - 1).map((page) => (
           <AnalyticsCard
             key={page.id}
-            value={`${summaryStats?.pages[page.id]} candidats ont répondus`}
+            value={`${summaryStats?.pages[page.id] || 0} candidats ont répondus`}
             label={page.blocks[0].data.text}
             toolTipText={page.toolTipText}
             trend={page.trend}

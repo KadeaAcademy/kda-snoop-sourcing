@@ -225,7 +225,8 @@ const QuestionItem: React.FC<QuestionItemProps> = ({
                 <span className='sr-only'>
                   {trend >= 0 ? "Increased" : "Decreased"}
                 </span>{" "}
-                {` : ${candidates}/${respondants} `}({trend}%)
+                {` : ${candidates}/${respondants === 0 ? 1 : respondants} `}(
+                {trend}%)
               </div>
             );
           })}
