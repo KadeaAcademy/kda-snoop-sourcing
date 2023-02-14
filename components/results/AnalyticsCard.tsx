@@ -30,6 +30,7 @@ interface Props {
   formId?: string;
   pageId?: string;
   formName: string;
+  genre: { male: number; female: number };
 }
 
 interface QuestionItemProps {
@@ -51,10 +52,15 @@ const AnalyticsCard: React.FC<Props> = ({
   formId,
   pageId,
   formName,
+  genre,
 }) => {
   const [isLoadingQuestionStats, setIsLoadingQuestionStats] = useState(true);
   const [isItemOpened, setIsItemOpened] = useState(false);
   const [stepStats, setstepStats] = useState();
+  const [genreRepartition, setGenreRepartition] = useState({
+    male: 0,
+    female: 0,
+  });
   const [questionsStats, setQuestionsStats] = useState<QuestionStatType>(null);
   const isLabelContainsNumber = /\d/.test(label.charAt(0));
   const fileTitle = `${formName} - ${
@@ -81,8 +87,9 @@ const AnalyticsCard: React.FC<Props> = ({
 
       getPageQuestionsDatas(formId, pageId, label)
         .then((res) => res.json())
-        .then((stepStats) => {
-          setstepStats(stepStats);
+        .then(({ female, male, Data }) => {
+          setstepStats(Data);
+          setGenreRepartition({ female, male });
         });
     }
   }, [isItemOpened]);
@@ -154,10 +161,31 @@ const AnalyticsCard: React.FC<Props> = ({
           <div
             className={classNames(
               smallerText ? "text-lg" : "text-lg",
-              "flex items-baseline text-md font-semibold text-gray-300 mt-3"
+              "flex-cols items-baseline text-md font-semibold text-gray-300 mt-3"
             )}
           >
             {value || 0}
+            {!genre ? null : (
+              <div
+                className={
+                  "flex items-baseline text-sm font-semibold text-gray-600 mt-3"
+                }
+              >
+                Femmes : {Object.keys(genre?.female).length}, Hommes : {Object.keys(genre?.male).length}
+              </div>
+            )}
+            {!questions?.length
+              ? null
+              : isItemOpened && (
+                  <div
+                    className={
+                      "flex items-baseline text-sm font-semibold text-gray-600 mt-3"
+                    }
+                  >
+                    Femmes : {genreRepartition.female}, Hommes :{" "}
+                    {genreRepartition.male}
+                  </div>
+                )}
           </div>
 
           {trend && (

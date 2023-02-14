@@ -117,6 +117,8 @@ export default async function handle(
 
 
     const Data = []
+    let male = 0;
+    let female = 0;
     candidates.map((r) => {
         if(r){
           Object.keys(r.submission).map((submissionId) => {
@@ -126,13 +128,13 @@ export default async function handle(
           })
           r["Soumissions"] = JSON.stringify(r.submission);
           delete r.submission
-        }
-        
+          r.gender === "male" ? male += 1: female += 1;
+      }
         Data.push(r)
     });
    
 
-    return res.json(Data);
+    return res.json({male, female, Data});
   }
 
   // Unknown HTTP Method

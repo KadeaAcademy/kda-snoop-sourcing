@@ -24,7 +24,12 @@ export default async function handle(
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const cOpenEvents = await prisma.sessionEvent.count({
+    const genderRepartitionCOpen = {
+      female: {},
+      male: {}
+    }
+
+    const cOpenEvents = await prisma.sessionEvent.findMany({
       where: {
         AND: [
           { type: "formOpened" },
@@ -36,7 +41,27 @@ export default async function handle(
           },
         ],
       },
+      select: {
+        data: true
+      }
     });
+
+    await Promise.all(cOpenEvents.map(async (s) => {
+
+
+      const candidateResponse  = await prisma.user.findUnique({
+          select: {
+            gender: true,
+          },
+          where:  {
+            id: s.data["candidateId"]
+          }
+        })
+       const candidate = s.data["candidateId"]
+       if(!genderRepartitionCOpen.male[candidate] || !genderRepartitionCOpen.female[candidate] ) {
+       candidateResponse.gender === "male" ? genderRepartitionCOpen.male[candidate] = 1 : genderRepartitionCOpen.female[candidate] = 1;
+     }
+      }));
 
     const cSubmissions = await prisma.sessionEvent.findMany({
       select: {
@@ -57,6 +82,28 @@ export default async function handle(
     const countSubmitted = new Set(
       cSubmissions.map((s) => s.data["candidateId"])
     ).size;
+
+    const genderRepartitionPSubmisson = {
+      female: {},
+      male: {}
+    }
+    await Promise.all(cSubmissions.map(async (s) => {
+
+
+      const candidateResponse  = await prisma.user.findUnique({
+          select: {
+            gender: true,
+          },
+          where:  {
+            id: s.data["candidateId"]
+          }
+        })
+      const candidate = s.data["candidateId"]
+      if(!genderRepartitionPSubmisson.male[candidate] || !genderRepartitionPSubmisson.female[candidate] ) {
+      candidateResponse.gender === "male" ? genderRepartitionPSubmisson.male[candidate] = 1 : genderRepartitionPSubmisson.female[candidate] = 1;
+    }
+  
+      }));
     const cPageSubmission = await prisma.sessionEvent.findMany({
       select: {
         data: true,
@@ -83,9 +130,12 @@ export default async function handle(
     });
 
     return res.json({
-      opened: cOpenEvents,
+      opened: cOpenEvents.length,
       submitted: countSubmitted,
-      pages
+      pages,
+      genderRepartitionCOpen,
+      genderRepartitionPSubmisson
+
     });
   }
 
