@@ -14,9 +14,10 @@ export default async function handle(
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
   const formId = req.query.id.toString();
-  const startDate = req.query.startDate.toString();
-  const endDate = req.query.endDate.toString();
+  const endDate =new Date( req.query.endDate.toString()).setHours(23,59,59,59);
+  const startDate = new Date(req.query.startDate.toString()).setHours(0,0,0,0);
   const session = await getSession({ req: req });
+
 
   // GET /api/forms/[formId]/events/summary-stats
   // Gets summary stats for a form
@@ -37,7 +38,7 @@ export default async function handle(
             },
           },
              
-          { createdAt: { lte: new Date(endDate), gte: new Date(startDate) } },
+          { createdAt: { lte:new Date(new Date(endDate).toUTCString()) , gte: new Date(new Date(startDate).toUTCString()) } },
         ],
       },
     });
