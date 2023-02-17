@@ -7,10 +7,13 @@ import { createUser } from "../../lib/users";
 import { handlePhoneNumberValidity } from "../../lib/utils";
 import { toast } from "react-toastify";
 
+
 const { publicRuntimeConfig } = getConfig();
+
 
 export default function SignUpPage() {
   const router = useRouter();
+  
 
   const {
     emailVerificationDisabled,
@@ -21,6 +24,16 @@ export default function SignUpPage() {
   const handleSubmit = async (e) => {
     const callbackUrl = router.query.callbackUrl?.toString() || "/soucings";
     e.preventDefault();
+
+    const dataAddress = {
+        numero: e.target.elements.addressNumber.value,
+        avenue: e.target.elements.addressStreet.value,
+        quartier :e.target.elements.addressQuartier.value,
+        commune:e.target.elements.addressCommune.value,
+        ville:e.target.elements.addressCity.value,
+      }
+    
+    
     try {
       await createUser(
         {
@@ -28,6 +41,8 @@ export default function SignUpPage() {
           lastname: e.target.elements.lastname.value,
           gender: e.target.elements.gender.value,
           phone: handlePhoneNumberValidity(e.target.elements.phone.value),
+          dateofbirth : e.target.elements.dob.value,
+          address : dataAddress,
           whatsapp: e.target.elements.whatsapp.value,
           email: e.target.elements.email.value,
           password: e.target.elements.password.value,
@@ -82,6 +97,7 @@ export default function SignUpPage() {
                       />
                     </div>
                   </div>
+
                   <div>
                     <label
                       htmlFor="lastname"
@@ -101,6 +117,7 @@ export default function SignUpPage() {
                       />
                     </div>
                   </div>
+                  
                   <div>
                     <label
                       htmlFor="gender"
@@ -146,6 +163,110 @@ export default function SignUpPage() {
 
                   <div>
                     <label
+                      htmlFor="dateOfBirth"
+                      className="block text-sm font-medium text-ui-gray-dark"
+                    >
+                      Date de naissance
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="dob"
+                        name="dob"
+                        type="date"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium text-ui-gray-dark"
+                    >
+                      Adresse
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="addressNumber"
+                        name="addressNumber"
+                        type="text"
+                        placeholder="45 ou 45bis"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <input
+                        id="addressStreet"
+                        name="addressStreet"
+                        type="text"
+                        placeholder="10ème Rue"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <input
+                        id="addressQuartier"
+                        name="addressQuartier"
+                        type="text"
+                        placeholder="Résidentiel"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <select 
+                        name="addressCommune" 
+                        id="addressCommune"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture">
+                        <option value="bandalungwa">Bandalungwa</option>
+                        <option value="barumbu">Barumbu</option>
+                        <option value="bumbu">Bumbu</option>
+                        <option value="gombe">Gombe</option>
+                        <option value="kalamu">Kalamu</option>
+                        <option value="kasa-vubu">Kasa-Vubu</option>
+                        <option value="kimbanseke">Kimbanseke</option>
+                        <option value="kinshasa">Kinshasa</option>
+                        <option value="kintambo">Kintambo</option>
+                        <option value="kisenso">Kisenso</option>
+                        <option value="lemba">Lemba</option>
+                        <option value="limete">Limete</option>
+                        <option value="lingwala">Lingwala</option>
+                        <option value="makala">Makala</option>
+                        <option value="maluku">Maluku</option>
+                        <option value="masina">Masina</option>
+                        <option value="matete">Matete</option>
+                        <option value="mont-ngafula">Mont-Ngafula</option>
+                        <option value="ndjili">Ndjili</option>
+                        <option value="ngaba">Ngaba</option>
+                        <option value="ngaliema">Ngaliema</option>
+                        <option value="ngiri-ngiri">Ngiri-Ngiri</option>
+                        <option value="nsele">Nsele</option>
+                        <option value="selembao">Selembao</option>
+                      </select>
+                      
+                    </div>
+
+                    <div className="mt-1">
+                      <input
+                        id="addressCity"
+                        name="addressCity"
+                        type="text"
+                        placeholder="Kinshasa"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
                       htmlFor="phone"
                       className="block text-sm font-medium text-ui-gray-dark"
                     >
@@ -181,6 +302,7 @@ export default function SignUpPage() {
                       />
                     </div>
                   </div>
+
                   <div>
                     <label
                       htmlFor="email"

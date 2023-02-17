@@ -17,13 +17,25 @@ export default async function handle(
   // Required fields in body: email, password (hashed)
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
+
     let { user, callbackUrl} = req.body;
     user = { ...user, ...{ email: user.email.toLowerCase() } };
 
-    const { emailVerificationDisabled } = publicRuntimeConfig;
+    
 
     // create user in database
     try {
+
+      const createAddress = await prisma.address.create({
+        data: user.address,        
+      })
+
+      delete user.address
+      
+      user.addressId = createAddress.id
+
+      const { emailVerificationDisabled } = publicRuntimeConfig;
+
       const userData = await prisma.user.create({
         data: {
           ...user,
@@ -39,6 +51,7 @@ export default async function handle(
           errorCode: e.code,
         });
       } else {
+        console.log(e)  
         return res.status(500).json({
           error: e.message,
           errorCode: e.code,
@@ -74,4 +87,12 @@ export default async function handle(
         `The HTTP ${req.method} method is not supported by this route.`
       );
     }
+}
+
+export async function newAddress({dataAddress}){
+
+  const createAddress = await prisma.address.create({
+    data: dataAddress,
+  })
+  return createAddress
 }
