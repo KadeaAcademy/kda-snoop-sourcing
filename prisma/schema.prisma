@@ -113,11 +113,11 @@ model Address {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now()) @map(name: "created_at")
   updatedAt DateTime @updatedAt @map(name: "updated_at")
-  numero    String
-  avenue    String
-  quartier  String
+  line1     String
+  line2     String?
   commune   String
   ville     String
+  province  String
   User      User[]
 }
 
@@ -126,7 +126,7 @@ model User {
   firstname     String?
   lastname      String?
   gender        String
-  dateofbirth   String
+  dob   String
   address       Address   @relation(fields: [addressId], references: [id], onDelete: Cascade)
   addressId     String
   phone         String    @unique

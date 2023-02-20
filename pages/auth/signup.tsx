@@ -7,10 +7,13 @@ import { createUser } from "../../lib/users";
 import { handlePhoneNumberValidity } from "../../lib/utils";
 import { toast } from "react-toastify";
 
+
 const { publicRuntimeConfig } = getConfig();
+
 
 export default function SignUpPage() {
   const router = useRouter();
+  
 
   const {
     emailVerificationDisabled,
@@ -21,6 +24,7 @@ export default function SignUpPage() {
   const handleSubmit = async (e) => {
     const callbackUrl = router.query.callbackUrl?.toString() || "/soucings";
     e.preventDefault();
+    
     try {
       await createUser(
         {
@@ -28,6 +32,18 @@ export default function SignUpPage() {
           lastname: e.target.elements.lastname.value,
           gender: e.target.elements.gender.value,
           phone: handlePhoneNumberValidity(e.target.elements.phone.value),
+          dob : e.target.elements.dob.value,
+          address : {
+            create:
+              {
+                line1: e.target.elements.line1.value,
+                line2: e.target.elements.line2.value,
+                commune:e.target.elements.commune.value,
+                ville:e.target.elements.ville.value,
+                province :e.target.elements.province.value
+              },
+
+          },
           whatsapp: e.target.elements.whatsapp.value,
           email: e.target.elements.email.value,
           password: e.target.elements.password.value,
@@ -82,6 +98,7 @@ export default function SignUpPage() {
                       />
                     </div>
                   </div>
+
                   <div>
                     <label
                       htmlFor="lastname"
@@ -172,10 +189,10 @@ export default function SignUpPage() {
                     </label>
                     <div className="mt-1">
                       <input
-                        id="addressNumber"
-                        name="addressNumber"
+                        id="line1"
+                        name="line1"
                         type="text"
-                        placeholder="45 ou 45bis"
+                        placeholder="Adresse principale: 12, Ave du Livre, Indus"
                         required
                         className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                       />
@@ -183,21 +200,32 @@ export default function SignUpPage() {
 
                     <div className="mt-1">
                       <input
-                        id="addressStreet"
-                        name="addressStreet"
+                        id="line2"
+                        name="line2"
                         type="text"
-                        placeholder="10ème Rue"
-                        required
+                        placeholder="Adresse secondaire: 12, Ave du Livre, Indus"
                         className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                       />
                     </div>
 
                     <div className="mt-1">
                       <input
-                        id="addressQuartier"
-                        name="addressQuartier"
+                        id="commune"
+                        name="commune"
                         type="text"
-                        placeholder="Résidentiel"
+                        placeholder="Commune ou Territoire"
+
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+                    
+                    <div className="mt-1">
+                      <input
+                        id="ville"
+                        name="ville"
+                        type="text"
+                        placeholder="Ville"
                         required
                         className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                       />
@@ -205,37 +233,43 @@ export default function SignUpPage() {
 
                     <div className="mt-1">
                       <select 
-                        name="addressCommune" 
-                        id="addressCommune"
+                        name="province" 
+                        id="province"
                         required
                         className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture">
-                        <option value="bandalungwa">Bandalungwa</option>
-                        <option value="barumbu">Barumbu</option>
-                        <option value="bumbu">Bumbu</option>
-                        <option value="gombe">Gombe</option>
-                        <option value="kalamu">Kalamu</option>
-                        <option value="kasa-vubu">Kasa-Vubu</option>
-                        <option value="kimbanseke">Kimbanseke</option>
+                        <option value="null">Sélectionnez votre province</option>
+                        <option value="bas-uele">Bas-Uele</option>
+                        <option value="equateur">Equateur</option>
+                        <option value="haut-katanga">Haut-Katanga</option>
+                        <option value="haut-lomami">Haut-Lomami</option>
+                        <option value="haut-uele">Haut-Uele</option>
+                        <option value="ituri">Ituri</option>
+                        <option value="kasai">Kasaï</option>
+                        <option value="kasai-central">Kasaï-Central</option>
+                        <option value="kasai-oriental">Kasaï-Oriental</option>
                         <option value="kinshasa">Kinshasa</option>
-                        <option value="kintambo">Kintambo</option>
-                        <option value="kisenso">Kisenso</option>
-                        <option value="lemba">Lemba</option>
-                        <option value="limete">Limete</option>
-                        <option value="lingwala">Lingwala</option>
-                        <option value="makala">Makala</option>
-                        <option value="maluku">Maluku</option>
-                        <option value="masina">Masina</option>
-                        <option value="matete">Matete</option>
-                        <option value="mont-ngafula">Mont-Ngafula</option>
-                        <option value="ndjili">Ndjili</option>
-                        <option value="ngaba">Ngaba</option>
-                        <option value="ngaliema">Ngaliema</option>
-                        <option value="ngiri-ngiri">Ngiri-Ngiri</option>
-                        <option value="nsele">Nsele</option>
-                        <option value="selembao">Selembao</option>
+                        <option value="kongo-central">Kongo-Central</option>
+                        <option value="kwango">Kwango</option>
+                        <option value="kwilu">Kwilu</option>
+                        <option value="lomami">Lomami</option>
+                        <option value="lualaba">Lualaba</option>
+                        <option value="mai-ndombe">Mai-Ndombe</option>
+                        <option value="maniema">Maniema</option>
+                        <option value="mongala">Mongala</option>
+                        <option value="nord-kivu">Nord-Kivu</option>
+                        <option value="nord-ubangi">Nord-Ubangi</option>
+                        <option value="sankuru">Sankuru</option>
+                        <option value="sud-kivu">Sud-Kivu</option>
+                        <option value="sud-ubangi">Sud-Ubangi</option>
+                        <option value="tanganyika">Tanganyika</option>
+                        <option value="tshopo">Tshopo</option>
+                        <option value="tshuapa">Tshuapa</option>
+                        
                       </select>
                       
                     </div>
+
+                    
                   </div>
 
                   <div>
