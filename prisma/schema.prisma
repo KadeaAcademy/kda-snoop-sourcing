@@ -17,12 +17,14 @@ enum FormOrder {
   SEQUENTIAL
   ABTEST
 }
+
 enum Location {
   Goma
   Lubumbashi
   Kinshasa
   Autre
 }
+
 enum Formation {
   DEV
   SMD
@@ -107,11 +109,26 @@ model SessionEvent {
   data                Json
 }
 
+model Address {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now()) @map(name: "created_at")
+  updatedAt DateTime @updatedAt @map(name: "updated_at")
+  numero    String
+  avenue    String
+  quartier  String
+  commune   String
+  ville     String
+  User      User[]
+}
+
 model User {
   id            Int       @id @default(autoincrement())
   firstname     String?
   lastname      String?
   gender        String
+  dateofbirth   String
+  address       Address   @relation(fields: [addressId], references: [id], onDelete: Cascade)
+  addressId     String
   phone         String    @unique
   whatsapp      String?
   email         String    @unique

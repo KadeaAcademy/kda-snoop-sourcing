@@ -1,6 +1,8 @@
 import { hashPassword } from "./auth";
 import useSWR from "swr";
 import { fetcher } from "./utils";
+import { newAddress } from "../pages/api/public/users"
+
 
 export enum UserRoles {
   Public = "PUBLIC",
@@ -8,10 +10,13 @@ export enum UserRoles {
 }
 
 export const createUser = async (
-  { firstname, lastname, gender, phone, whatsapp, email, password },
+  { firstname, lastname, gender, dateofbirth, address, phone, whatsapp, email, password },
   callbackUrl = ""
 ) => {
   const hashedPassword = await hashPassword(password);
+
+
+
   try {
     const res = await fetch(`/api/public/users`, {
       method: "POST",
@@ -22,6 +27,8 @@ export const createUser = async (
           firstname,
           lastname,
           gender,
+          dateofbirth,
+          address,
           phone,
           whatsapp,
           email,
@@ -39,6 +46,7 @@ export const createUser = async (
     throw Error(`${error.message}`);
   }
 };
+
 
 export const resendVerificationEmail = async (email, callbackUrl) => {
   try {
