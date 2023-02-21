@@ -123,8 +123,10 @@ export default async function handle(
         if(r){
           Object.keys(r.submission).map((submissionId) => {
             const submissionFind = pageQuestions.find(({id}) => id === submissionId)
+           if(submissionFind) {
             r.submission[submissionFind.data.label] =  r.submission[submissionId];
             delete  r.submission[submissionId];
+           }
           })
           r["Soumissions"] = JSON.stringify(r.submission);
           delete r.submission
