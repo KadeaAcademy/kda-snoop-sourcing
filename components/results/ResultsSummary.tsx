@@ -55,7 +55,9 @@ export default function ResultsSummary({ formId }) {
       id: "totalCandidateOpenedForm",
       name: "Nombre de candidats ayant vu",
       stat: summaryStats ? summaryStats.opened : 0,
-      genre: summaryStats ? summaryStats.genderRepartitionCOpen : {female: 0, male: 0},
+      gender: summaryStats
+        ? summaryStats.genderRepartitionCOpen
+        : { female: 0, male: 0 },
       trend: undefined,
       toolTipText: undefined,
     },
@@ -67,7 +69,9 @@ export default function ResultsSummary({ formId }) {
             (summaryStats.submitted / summaryStats.opened) * 100
           )}%)`
         : 0,
-      genre: summaryStats ? summaryStats.genderRepartitionPSubmisson : {female: 0, male: 0},
+      gender: summaryStats
+        ? summaryStats.genderRepartitionPSubmisson
+        : { female: 0, male: 0 },
       trend: undefined,
       toolTipText: undefined,
     },
@@ -88,13 +92,13 @@ export default function ResultsSummary({ formId }) {
 
   return (
     <>
-      <h1 className='mt-8 text-2xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4'>
+      <h1 className="mt-8 text-2xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         {form.name}
       </h1>
-      <h2 className='mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4'>
+      <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         General report
       </h2>
-      <dl className='grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2'>
+      <dl className="grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2">
         {defaultInsights.map((item) => (
           <AnalyticsCard
             key={item.id}
@@ -109,15 +113,15 @@ export default function ResultsSummary({ formId }) {
             smallerText={item.smallerText}
             questions={item.questions}
             formName={form.name}
-            genre={item.genre}
+            gender={item.gender}
           />
         ))}
       </dl>
 
-      <h2 className='mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4'>
+      <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         Diférentes étapes
       </h2>
-      <dl className='grid  gap-5 mt-8 mb-12 '>
+      <dl className="grid  gap-5 mt-8 mb-12 ">
         {pages.slice(0, pages.length - 1).map((page) => (
           <AnalyticsCard
             key={page.id}

@@ -30,7 +30,7 @@ interface Props {
   formId?: string;
   pageId?: string;
   formName: string;
-  genre: { male: number; female: number };
+  gender: { male: number; female: number };
 }
 
 interface QuestionItemProps {
@@ -52,14 +52,14 @@ const AnalyticsCard: React.FC<Props> = ({
   formId,
   pageId,
   formName,
-  genre,
+  gender,
 }) => {
   const [isLoadingQuestionStats, setIsLoadingQuestionStats] = useState(true);
   const [isItemOpened, setIsItemOpened] = useState(false);
   const [stepStats, setstepStats] = useState();
-  const [genreRepartition, setGenreRepartition] = useState({
-    male: "...",
-    female: "...",
+  const [genderRepartition, setGenderRepartition] = useState({
+    male: 0,
+    female: 0,
   });
   const [questionsStats, setQuestionsStats] = useState<QuestionStatType>(null);
   const isLabelContainsNumber = /\d/.test(label.charAt(0));
@@ -69,7 +69,7 @@ const AnalyticsCard: React.FC<Props> = ({
   const headers = [
     { label: "Prénom", key: "firstname" },
     { label: "Nom", key: "lastname" },
-    { label: "Genre", key: "gender" },
+    { label: "Gender", key: "gender" },
     { label: "Email", key: "email" },
     { label: "Whatsapp", key: "whatsapp" },
     { label: "Soumissions", key: "Soumissions" },
@@ -89,10 +89,23 @@ const AnalyticsCard: React.FC<Props> = ({
         .then((res) => res.json())
         .then(({ female, male, Data }) => {
           setstepStats(Data);
-          setGenreRepartition({ female, male });
+          setGenderRepartition({ female, male });
         });
     }
   }, [isItemOpened]);
+
+  const renderGenderRepartitionStats = (
+    femaleGenderRate,
+    maleGenderRate,
+    statRate
+  ) => (
+    <>
+      Femmes : {femaleGenderRate} ou{" "}
+      {((femaleGenderRate / parseInt(statRate, 10)) * 100).toFixed(2)}% , Hommes
+      : {maleGenderRate} ou{" "}
+      {((maleGenderRate / parseInt(statRate, 10)) * 100).toFixed(2)}%
+    </>
+  );
 
   return (
     <div
@@ -165,28 +178,19 @@ const AnalyticsCard: React.FC<Props> = ({
             )}
           >
             {value || 0}
-            {!genre ? null : (
+            {!gender ? null : (
               <div
                 className={
                   "flex items-baseline text-sm font-semibold text-gray-600 mt-3"
                 }
               >
-                Femmes : {Object.keys(genre?.female).length}, Hommes :{" "}
-                {Object.keys(genre?.male).length}
+                {renderGenderRepartitionStats(
+                  Object.keys(gender?.female).length,
+                  Object.keys(gender?.male).length,
+                  value
+                )}
               </div>
             )}
-            {!questions?.length
-              ? null
-              : isItemOpened && (
-                  <div
-                    className={
-                      "flex items-baseline text-sm font-semibold text-gray-600 mt-3"
-                    }
-                  >
-                    Femmes : {genreRepartition.female}, Hommes :{" "}
-                    {genreRepartition.male}
-                  </div>
-                )}
           </div>
 
           {trend && (
@@ -221,6 +225,17 @@ const AnalyticsCard: React.FC<Props> = ({
         <Loading />
       ) : (
         <>
+          <div
+            className={
+              "flex w-full items-baseline text-sm font-semibold text-gray-600 mb-3 px-5"
+            }
+          >
+            {renderGenderRepartitionStats(
+              genderRepartition.female,
+              genderRepartition.male,
+              value
+            )}
+          </div>
           <div
             className={
               "flex items-baseline text-lg font-normal text-gray-800 w-full px-5 "

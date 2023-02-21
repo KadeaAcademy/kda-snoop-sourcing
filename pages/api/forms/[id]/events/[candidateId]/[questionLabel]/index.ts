@@ -120,7 +120,7 @@ export default async function handle(
     let male = 0;
     let female = 0;
     candidates.map((r) => {
-        if(r){
+        if(r.submission){
           Object.keys(r.submission).map((submissionId) => {
             const submissionFind = pageQuestions.find(({id}) => id === submissionId)
            if(submissionFind) {
