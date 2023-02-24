@@ -5,8 +5,13 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
 } from "@heroicons/react/24/solid";
+import { Chip } from "@mui/material";
 import React, { useState, useEffect } from "react";
-import { getPageQuestionsStats } from "../../lib/submissionSessions";
+import {
+  getPageQuestionsDatas,
+  getPageQuestionsStats,
+} from "../../lib/submissionSessions";
+import { CSVLink } from "react-csv";
 import { classNames } from "../../lib/utils";
 import Loading from "../Loading";
 
@@ -26,6 +31,7 @@ interface Props {
   pageId?: string;
   startDate?: Date;
   endDate?: Date;
+  formName: string;
 }
 
 interface QuestionItemProps {
@@ -48,10 +54,18 @@ const AnalyticsCard: React.FC<Props> = ({
   pageId,
   startDate,
   endDate,
+  formName,
 }) => {
   const [isLoadingQuestionStats, setIsLoadingQuestionStats] = useState(true);
   const [isItemOpened, setIsItemOpened] = useState(false);
+  const [stepStats, setStepStats] = useState();
+  const [headers, setHeaders] = useState([]);
   const [questionsStats, setQuestionsStats] = useState<QuestionStatType>(null);
+  const regexPattern = /[^A-Za-z0-9]/g;
+  const fileTitle = `${formName} _ ${label.replace(
+    regexPattern,
+    "_"
+  )}_${new Date()}`;
 
   useEffect(() => {
     if (isItemOpened) {
@@ -59,7 +73,15 @@ const AnalyticsCard: React.FC<Props> = ({
         .then((res) => res.json())
         .then((data) => {
           setQuestionsStats(data.qStats);
+
           setIsLoadingQuestionStats(false);
+        });
+
+      getPageQuestionsDatas(formId, pageId, label)
+        .then((res) => res.json())
+        .then(({ Data, headerConfig }) => {
+          setHeaders(headerConfig);
+          setStepStats(Data);
         });
     }
   }, [isItemOpened, startDate, endDate]);
@@ -89,17 +111,23 @@ const AnalyticsCard: React.FC<Props> = ({
               {toolTipText}
             </span>
           )}
-          {!questions?.length ? null : !isItemOpened ? (
-            <ChevronDownIcon
-              className='-ml-1 mr-0.5 flex-shrink-0 self-center h-5 w-5 '
-              aria-hidden='true'
-            />
-          ) : (
-            <ChevronUpIcon
-              className='-ml-1 mr-0.5 flex-shrink-0 self-center h-5 w-5 '
-              aria-hidden='true'
-            />
-          )}
+          <div className="flex">
+            {!questions?.length ? null : !isItemOpened ? (
+              <>
+                <ChevronDownIcon
+                  className="ml-5   mr-0.5 flex-shrink-0 self-center h-5 w-5 "
+                  aria-hidden="true"
+                />
+              </>
+            ) : (
+              <>
+                <ChevronUpIcon
+                  className="ml-5   mr-0.5 flex-shrink-0 self-center h-5 w-5 "
+                  aria-hidden="true"
+                />
+              </>
+            )}
+          </div>
         </dt>
         <dd className='flex items-baseline justify-between mt-1 md:block lg:flex'>
           <div
@@ -108,7 +136,7 @@ const AnalyticsCard: React.FC<Props> = ({
               "flex items-baseline text-md font-semibold text-gray-300 mt-3"
             )}
           >
-            {value}
+            {value || 0}
           </div>
 
           {trend && (
@@ -145,6 +173,32 @@ const AnalyticsCard: React.FC<Props> = ({
         <>
           <div
             className={
+              "flex items-baseline text-lg font-normal text-gray-800 w-full px-5 mb-5 "
+            }
+          >
+            {stepStats && (
+              <div className="cursor-pointer ">
+                <CSVLink
+                  filename={fileTitle}
+                  headers={headers}
+                  data={stepStats}
+                >
+                  <div className="cursor-pointer ">
+                    <Chip
+                      label="Exporter"
+                      onClick={() => {
+                        console.log("Clicked");
+                      }}
+                      color="success"
+                    />
+                  </div>
+                </CSVLink>
+              </div>
+            )}
+          </div>
+
+          <div
+            className={
               "flex items-baseline text-lg font-normal text-gray-800 w-full px-5 "
             }
           >
@@ -159,7 +213,6 @@ const AnalyticsCard: React.FC<Props> = ({
             const q = questions.find((question) => question.id === qId);
 
             if (q?.type !== "multipleChoiceQuestion") return;
-
             const getNumberOfResponses = () => {
               return qOptions.reduce((a, v) => a + v.candidates, 0);
             };
