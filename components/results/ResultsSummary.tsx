@@ -87,9 +87,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
 
   return (
     <>
-      <h1 className="mt-8 text-2xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
-        {form.name}
-      </h1>
+      
       <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         General report
       </h2>

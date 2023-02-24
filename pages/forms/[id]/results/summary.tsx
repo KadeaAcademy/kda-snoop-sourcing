@@ -39,18 +39,21 @@ function ResultsSummaryPage() {
       title={`${form.name} - KDA Sourcing`}
       breadcrumbs={[{ name: form.name, href: "#", current: true }]}
       steps={formMenuSteps}
-      currentStep='results'
+      currentStep="results"
     >
       <SecondNavBar
         navItems={formResultsSecondNavigation}
-        currentItemId='summary'
+        currentItemId="summary"
       />
 
       <LimitedWidth>
-        <div className='flex-col mt-8   p-4 border w-2/3 rounded-sm'>
-          <p className='mb-2'>Filtre</p>
-          <div className='flex items-center'>
-            <div className='mr-2 '>
+        <h1 className="mt-8 text-2xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
+          {form.name}
+        </h1>
+        <div className="flex-col mt-8   p-4 border w-2/3 rounded-sm">
+          <p className="mb-2">Filtre</p>
+          <div className="flex items-center">
+            <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={startDate || new Date(form?.createdAt)}
@@ -61,8 +64,8 @@ function ResultsSummaryPage() {
                 />
               </LocalizationProvider>
             </div>
-            <p className='m-4'>Au</p>
-            <div className='ml-2'>
+            <p className="m-4">Au</p>
+            <div>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   value={endDate || new Date(form?.dueDate)}
@@ -72,6 +75,14 @@ function ResultsSummaryPage() {
                   renderInput={(params) => <TextField {...params} />}
                 />
               </LocalizationProvider>
+            </div>
+            <div className="ml-2">
+              <button
+                type="button"
+                className="bg-[#e74c3c] text-white p-4 rounded-sm"
+              >
+                APPLIQUER
+              </button>
             </div>
           </div>
         </div>
