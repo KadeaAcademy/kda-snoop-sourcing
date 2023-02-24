@@ -19,6 +19,7 @@ export default async function handle(
   const endDate = req.query.endDate.toString();
   const session = await getSession({ req: req });
 
+  console.log({endDate})
   // GET /api/forms/[id]/events/[pageId]/question-stats
   // Gets all page submission statistics for a specific form
   if (req.method === "GET") {

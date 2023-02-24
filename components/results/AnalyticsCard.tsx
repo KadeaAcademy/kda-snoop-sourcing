@@ -72,6 +72,7 @@ const AnalyticsCard: React.FC<Props> = ({
       getPageQuestionsStats(formId, pageId, startDate, endDate)
         .then((res) => res.json())
         .then((data) => {
+          console.log({ data });
           setQuestionsStats(data.qStats);
 
           setIsLoadingQuestionStats(false);

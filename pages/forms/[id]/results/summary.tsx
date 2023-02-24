@@ -59,7 +59,7 @@ function ResultsSummaryPage() {
                 <DatePicker
                   value={startDate || new Date(form?.createdAt)}
                   onChange={(newValue) => {
-                    setStartDate(newValue);
+                    setStartDate(newValue.$d);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
@@ -71,7 +71,7 @@ function ResultsSummaryPage() {
                 <DatePicker
                   value={endDate || new Date(form?.dueDate)}
                   onChange={(newValue) => {
-                    setEndDate(newValue);
+                    setEndDate(newValue.$d);
                   }}
                   renderInput={(params) => <TextField {...params} />}
                 />
@@ -82,10 +82,13 @@ function ResultsSummaryPage() {
                 type="button"
                 className="bg-[#e74c3c] text-white p-4 rounded-sm"
                 onClick={() => {
+                  console.log({ applyFilterRef });
                   applyFilterRef.current.getSummaryStats(
                     startDate || new Date(form?.createdAt),
                     endDate || new Date(form?.dueDate)
                   );
+                  setStartDate(startDate || new Date(form?.createdAt));
+                  setEndDate(endDate || new Date(form?.dueDate));
                 }}
               >
                 APPLIQUER

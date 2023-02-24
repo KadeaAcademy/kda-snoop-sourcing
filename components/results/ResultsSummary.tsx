@@ -62,7 +62,7 @@ export default function ResultsSummary({
 
   useEffect(() => {
     getNocodeFormBlocks();
-  }, [startDate, endDate]);
+  }, []);
 
   const pages = usePages({ blocks: formBlocks, formId });
 
@@ -141,8 +141,8 @@ export default function ResultsSummary({
             questions={getFormQuestions(page)}
             formId={formId}
             pageId={page.id}
-            startDate={startDate}
-            endDate={endDate}
+            startDate={startDate?.$d || startDate}
+            endDate={endDate?.$d || endDate}
             formName={form.name}
           />
         ))}
