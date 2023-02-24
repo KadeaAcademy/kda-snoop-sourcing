@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useImperativeHandle, useState } from "react";
 import { useForm } from "../../lib/forms";
 import { getFormSummaryStats } from "../../lib/submissionSessions";
 import { isBlockAQuestion } from "../../lib/utils";
@@ -12,25 +12,41 @@ type SummaryStatsType = {
   pages: any;
 } | null;
 
-export default function ResultsSummary({ formId, startDate, endDate }) {
+export default function ResultsSummary({
+  formId,
+  startDate,
+  endDate,
+  applyFilterRef,
+}) {
   const [summaryStats, setSummaryStats] = useState<SummaryStatsType>(null);
-
-  useEffect(() => {
-    (async () => {
-      const data = await getFormSummaryStats(formId, startDate, endDate);
-      if (data) setSummaryStats(data);
-    })();
-  }, [startDate, endDate]);
 
   const { form, isLoadingForm } = useForm(formId);
   const [formBlocks, setFormBlocks] = useState([]);
   const [isFormBlocksLoading, setIsFormBlocksLoading] = useState(true);
+
   const getFormQuestions = (page) => {
     return page.blocks.filter((b) => isBlockAQuestion(b));
   };
 
-  const getNocodeFormBlocks = async () => {
+  const getSummaryStats = async (startDate, endDate) => {
     setIsFormBlocksLoading(true);
+    const data = await getFormSummaryStats(formId, startDate, endDate);
+    if (data) setSummaryStats(data);
+    setIsFormBlocksLoading(false);
+  };
+
+  useImperativeHandle(
+    applyFilterRef,
+    () => ({
+      getSummaryStats,
+    }),
+    []
+  );
+
+  useEffect(() => {
+    getSummaryStats(startDate, endDate);
+  }, []);
+  const getNocodeFormBlocks = async () => {
     try {
       const progress = await fetch(`/api/public/forms/${form.id}/nocodeform`, {
         method: "GET",
@@ -41,8 +57,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
       }
       const data = await progress.json();
       setFormBlocks(data?.form?.blocks);
-    setIsFormBlocksLoading(false);
-  } catch (error) {}
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -51,6 +66,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
 
   const pages = usePages({ blocks: formBlocks, formId });
 
+  const totalFormOpened = summaryStats?.opened === 0 ? 1 : summaryStats?.opened;
   const defaultInsights = [
     {
       id: "totalCandidateOpenedForm",
@@ -64,7 +80,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
       name: "Nombre de candidats ayant soumis",
       stat: summaryStats
         ? `${summaryStats.submitted} (${Math.round(
-            (summaryStats.submitted / summaryStats.opened) * 100
+            (summaryStats.submitted / totalFormOpened) * 100
           )}%)`
         : 0,
       trend: undefined,
@@ -87,11 +103,10 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
 
   return (
     <>
-      
       <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         General report
       </h2>
-      <dl className='grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2'>
+      <dl className="grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2">
         {defaultInsights.map((item) => (
           <AnalyticsCard
             key={item.id}
@@ -110,7 +125,7 @@ export default function ResultsSummary({ formId, startDate, endDate }) {
         ))}
       </dl>
 
-      <h2 className='mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4'>
+      <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         Diférentes étapes
       </h2>
       <dl className="grid  gap-5 mt-8 mb-12 ">

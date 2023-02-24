@@ -13,7 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function ResultsSummaryPage() {
   const router = useRouter();
@@ -23,6 +23,7 @@ function ResultsSummaryPage() {
   const formResultsSecondNavigation = useFormResultsSecondNavigation(formId);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const applyFilterRef = useRef();
 
   if (isLoadingForm) {
     return <Loading />;
@@ -80,6 +81,12 @@ function ResultsSummaryPage() {
               <button
                 type="button"
                 className="bg-[#e74c3c] text-white p-4 rounded-sm"
+                onClick={() => {
+                  applyFilterRef.current.getSummaryStats(
+                    startDate || new Date(form?.createdAt),
+                    endDate || new Date(form?.dueDate)
+                  );
+                }}
               >
                 APPLIQUER
               </button>
@@ -91,6 +98,7 @@ function ResultsSummaryPage() {
             formId={formId}
             startDate={startDate || new Date(form?.createdAt)}
             endDate={endDate || new Date(form?.dueDate)}
+            applyFilterRef={applyFilterRef}
           />
         )}
       </LimitedWidth>
