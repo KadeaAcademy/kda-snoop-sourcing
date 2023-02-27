@@ -15,11 +15,10 @@ export default async function handle(
   });
   const formId = req.query.id.toString();
   const pageId = req.query.candidateId.toString();
-  const startDate = req.query.startDate.toString();
-  const endDate = req.query.endDate.toString();
+  const endDate =new Date( req.query.endDate.toString()).setHours(23,59,59,59);
+  const startDate = new Date(req.query.startDate.toString()).setHours(0,0,0,0);
   const session = await getSession({ req: req });
 
-  console.log({endDate})
   // GET /api/forms/[id]/events/[pageId]/question-stats
   // Gets all page submission statistics for a specific form
   if (req.method === "GET") {

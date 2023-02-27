@@ -24,7 +24,7 @@ export default async function handle(
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    console.log({fate: new Date()})
+   
     const submissionSessionsData = await prisma.submissionSession.findMany({
       where: {
         form: { id: formId },

@@ -12,7 +12,7 @@ export default async function handle(
     origin: "*",
     optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
   });
-  console.log({query:req})
+  
   const formId = req.query.id.toString();
   // const startDate = req.query.id.toString();
   const session = await getSession({ req: req });
