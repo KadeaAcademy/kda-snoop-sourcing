@@ -136,20 +136,18 @@ export default async function handle(
       return res.status(status).json({ error: message });
     }
     res.json({ success: true });
-    for (const event of events) {
       // event.data =  {...event.data, ...form, submissions}
-      event.data = { ...event.data, formId, formName: form.name, submissions };
-      delete event.data.createdAt;
-      delete event.data.updatedAt;
-      delete event.data.ownerId;
-      delete event.data.formType;
-      delete event.data.answeringOrder;
-      delete event.data.description;
-      delete event.data.dueDate;
-      delete event.data.schema;
-      const candidateEvent = { user: session.user, ...event };
+      events[0].data = { ...events[0].data, formId, formName: form.name, submissions };
+      delete events[0].data.createdAt;
+      delete events[0].data.updatedAt;
+      delete events[0].data.ownerId;
+      delete events[0].data.formType;
+      delete events[0].data.answeringOrder;
+      delete events[0].data.description;
+      delete events[0].data.dueDate;
+      delete events[0].data.schema;
+      const candidateEvent = { user: session.user, ...events[0] };
       processApiEvent(candidateEvent, formId, session.user.id);
-    }
   }
   // Unknown HTTP Method
   else {

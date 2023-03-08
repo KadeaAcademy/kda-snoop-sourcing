@@ -163,34 +163,34 @@ export default async function handle(
           return res.status(status).json({ error: message });
         }
 
-        for (const event of events) {
+       
           // event.data =  {...event.data, ...form, submissions}
-          event.data.type = "scoreSummary";
-          event.data = {
-            ...event.data,
+          events[0].data.type = "scoreSummary";
+          events[0].data = {
+            ...events[0].data,
             formId,
             formName: form.name,
             submissions,
           };
           
-          delete event.data.createdAt;
-          delete event.data.updatedAt;
-          delete event.data.ownerId;
-          delete event.data.formType;
-          delete event.data.answeringOrder;
-          delete event.data.description;
-          delete event.data.dueDate;
-          delete event.data.schema;
-          event.type = "scoreSummary"
-          const candidateEvent = { user: candidate, ...event };
+          delete events[0].data.createdAt;
+          delete events[0].data.updatedAt;
+          delete events[0].data.ownerId;
+          delete events[0].data.formType;
+          delete events[0].data.answeringOrder;
+          delete events[0].data.description;
+          delete events[0].data.dueDate;
+          delete events[0].data.schema;
+          events[0].type = "scoreSummary"
+          const candidateEvent = { user: candidate, ...events[0] };
 
           updateCandidatesEvents.push({
             candidateEvent,
             formId,
             candidateId: candidate.id,
-            candidateName: `${candidate.firstname} - ${candidate.lastname}`,
+            candidateName: `${candidate.firstname} - ${candidate.email}`,
           });
-        }
+        
       } else {
         throw new Error(
           `The HTTP ${req.method} method is not supported by this route.`
