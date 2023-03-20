@@ -17,9 +17,7 @@ export default async function handle(
   // Required fields in body: email, password (hashed)
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
-    let { user, callbackUrl} = req.body;
-    user = { ...user, ...{ email: user.email.toLowerCase() } };
-
+    let { user, address, callbackUrl} = req.body;
     const { emailVerificationDisabled } = publicRuntimeConfig;
 
     // create user in database
@@ -27,6 +25,10 @@ export default async function handle(
       const userData = await prisma.user.create({
         data: {
           ...user,
+          profileIsvalid: true,
+          address: {
+            create: address
+          }
         },
       });
       if (!emailVerificationDisabled) await sendVerificationEmail(userData, callbackUrl);

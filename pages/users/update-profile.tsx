@@ -75,7 +75,6 @@ export default function UpdateProfile() {
     try {
       let userUpdateData = user;
       userUpdateData.dob = new Date(userUpdateData.dob);
-      userUpdateData.profileIsValid = true;
       delete userUpdateData.address;
       await updateUser(userUpdateData, address);
       toast.success("Votre profil a bien été mis à jour");
@@ -184,7 +183,7 @@ export default function UpdateProfile() {
                         <input
                           id="dob"
                           name="dob"
-                          value={user.dob ? user.dob.toString().substring(0, 10) : new Date().toISOString().substring(0, 10)}
+                          value={user.dob ? user.dob.toString().substring(0, 10) : ""}
                           onChange={handleInputChange}
                           onBlur={(e) => handleBlur(e, "Date de naissance")}
                           type="date"

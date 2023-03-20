@@ -8,10 +8,11 @@ export enum UserRoles {
 }
 
 export const createUser = async (
-  { firstname, lastname, gender, dob, address, phone, whatsapp, email, password },
+  user,
+  address,
   callbackUrl = ""
 ) => {
-  const hashedPassword = await hashPassword(password);
+  const password = await hashPassword(user.password);
   try {
     const res = await fetch(`/api/public/users`, {
       method: "POST",
@@ -19,17 +20,10 @@ export const createUser = async (
       body: JSON.stringify({
         callbackUrl,
         user: {
-          firstname,
-          lastname,
-          gender,
-          dob,
-          address,
-          phone,
-          whatsapp,
-          email,
-          password: hashedPassword,
-          profileIsValid: true,
+          ...user,
+          password,
         },
+        address
       }),
     });
     if (res.status !== 200) {
