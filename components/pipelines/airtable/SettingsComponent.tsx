@@ -122,7 +122,7 @@ export function AirtableSettings({ pipeline, setPipeline }) {
                       <input
                         id='comments'
                         name='comments'
-                        type='checkbox'
+                        type='radio'
                         checked={pipeline.events.includes(eventType.id)}
                         onChange={() => toggleEvent(eventType.id)}
                         className='w-4 h-4 text-red-600 border-gray-300 rounded-sm focus:ring-red-500'
