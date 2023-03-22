@@ -1,15 +1,22 @@
 import { useEffect, useState } from "react";
 import { useForm } from "../../lib/forms";
-import { getFormSummaryStats } from "../../lib/submissionSessions";
-import { isBlockAQuestion } from "../../lib/utils";
+import {
+  getFormSummaryStats,
+  getPageQuestionsDatas,
+} from "../../lib/submissionSessions";
+import { formatPages, getFormPages, isBlockAQuestion } from "../../lib/utils";
 import AnalyticsCard from "./AnalyticsCard";
 import Loading from "../Loading";
 import usePages from "../../hooks/usePages";
+import { Chip } from "@mui/material";
+import { exportToExcel } from "react-json-to-excel";
 
 type SummaryStatsType = {
   opened: number;
   submitted: number;
   pages: any;
+  candidatesOpened: any;
+  candidatesSubmitted: any;
 } | null;
 
 export default function ResultsSummary({ formId }) {
@@ -24,6 +31,7 @@ export default function ResultsSummary({ formId }) {
 
   const { form, isLoadingForm } = useForm(formId);
   const [formBlocks, setFormBlocks] = useState([]);
+  const [exportingSummary, setExportingSummary] = useState(false);
   const getFormQuestions = (page) => {
     return page.blocks.filter((b) => isBlockAQuestion(b));
   };
@@ -78,6 +86,39 @@ export default function ResultsSummary({ formId }) {
     // },
   ];
 
+  const exportSourcing = async () => {
+    setExportingSummary(true);
+    const pages = getFormPages(formBlocks, formId);
+    const pagesFormated = formatPages(pages);
+    const formDataTampon = [
+      {
+        sheetName: "Candidats ayant vu",
+        details: [...summaryStats.candidatesOpened],
+      },
+      {
+        sheetName: "Candidats ayant soumis",
+        details: [...summaryStats.candidatesSubmitted],
+      },
+    ];
+
+    await Promise.all(
+      Object.keys(pagesFormated).map(async (key) => {
+        if (pagesFormated[key].title) {
+          await getPageQuestionsDatas(formId, key, pagesFormated[key].title)
+            .then((res) => res.json())
+            .then(({ Data }) => {
+              formDataTampon.push({
+                sheetName: pagesFormated[key].title.slice(0, 30),
+                details: [...Data],
+              });
+            });
+        }
+      })
+    );
+    exportToExcel(formDataTampon, form.name, true);
+    setExportingSummary(false);
+  };
+
   if (!summaryStats) {
     return <Loading />;
   }
@@ -90,6 +131,18 @@ export default function ResultsSummary({ formId }) {
       <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         General report
       </h2>
+      <div className="cursor-pointer pt-4">
+        {exportingSummary ? (
+          <Loading />
+        ) : (
+          <Chip
+            label="Exporter les données"
+            onClick={() => exportSourcing()}
+            color="success"
+            size="medium"
+          />
+        )}
+      </div>
       <dl className="grid grid-cols-1 gap-5 mt-8 sm:grid-cols-2">
         {defaultInsights.map((item) => (
           <AnalyticsCard
@@ -112,6 +165,7 @@ export default function ResultsSummary({ formId }) {
       <h2 className="mt-8 text-xl font-bold text-ui-gray-dark max-sm:pl-4 max-md:pl-4">
         Diférentes étapes
       </h2>
+
       <dl className="grid  gap-5 mt-8 mb-12 ">
         {pages.slice(0, pages.length - 1).map((page) => (
           <AnalyticsCard

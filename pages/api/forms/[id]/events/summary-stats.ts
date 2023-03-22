@@ -24,7 +24,9 @@ export default async function handle(
       return res.status(401).json({ message: "Not authenticated" });
     }
 
-    const cOpenEvents = await prisma.sessionEvent.count({
+    const candidatesOpened = [];
+    const candidatesSubmitted = [];
+    const cOpenEvents = await prisma.sessionEvent.findMany({
       where: {
         AND: [
           { type: "formOpened" },
@@ -38,6 +40,23 @@ export default async function handle(
       },
     });
 
+    await Promise.all(cOpenEvents.map(async({data}) => {
+      const candidate = await prisma.user.findUnique({
+        select: {
+          firstname: true,
+          lastname: true,
+          gender: true,
+          phone: true,
+          email: true,
+          whatsapp: true,
+        },
+        where: {
+          id: data.candidateId
+        }
+      })
+      candidatesOpened.push(candidate)
+    }))
+    
     const cSubmissions = await prisma.sessionEvent.findMany({
       select: {
         data: true,
@@ -55,8 +74,29 @@ export default async function handle(
       },
     });
     const countSubmitted = new Set(
-      cSubmissions.map((s) => s.data["candidateId"])
+      cSubmissions.map((s) => {
+        return s.data["candidateId"]
+      })
     ).size;
+
+    await Promise.all(cSubmissions.map(async({data}) => {
+      const candidate = await prisma.user.findUnique({
+        select: {
+          firstname: true,
+          lastname: true,
+          gender: true,
+          phone: true,
+          email: true,
+          whatsapp: true,
+        },
+        where: {
+          id: data.candidateId
+        }
+      })
+      candidatesSubmitted.push(candidate)
+    }))
+
+
     const cPageSubmission = await prisma.sessionEvent.findMany({
       select: {
         data: true,
@@ -83,9 +123,11 @@ export default async function handle(
     });
 
     return res.json({
-      opened: cOpenEvents,
+      opened: cOpenEvents.length,
       submitted: countSubmitted,
-      pages
+      pages,
+      candidatesOpened,
+      candidatesSubmitted
     });
   }
 
