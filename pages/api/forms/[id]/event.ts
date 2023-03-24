@@ -186,9 +186,12 @@ async function setCandidateSubmissionCompletedEvent(id, formId: string, pagesSub
     },
   });
 
+
+
   if (!candidateSubmissionCompleted &&
     pagesSubmited.length === formTotalPages) {
     events[0].data.type = "submissionCompletedEvent";
+    
     await prisma.sessionEvent.create({
       data: {
         type: "submissionCompletedEvent",
@@ -196,6 +199,8 @@ async function setCandidateSubmissionCompletedEvent(id, formId: string, pagesSub
         updatedAt: new Date(),
         data: {
           user: id,
+          formId,
+          candidateId: id
         },
         submissionSession: {
           connect: { id: events[0].data.submissionSessionId },

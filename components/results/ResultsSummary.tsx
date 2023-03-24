@@ -14,9 +14,11 @@ import { exportToExcel } from "react-json-to-excel";
 type SummaryStatsType = {
   opened: number;
   submitted: number;
+  finished;
   pages: any;
   candidatesOpened: any;
   candidatesSubmitted: any;
+  candidatesFinished;
 } | null;
 
 export default function ResultsSummary({ formId }) {
@@ -75,15 +77,17 @@ export default function ResultsSummary({ formId }) {
       trend: undefined,
       toolTipText: undefined,
     },
-    // {
-    //   id: "lastSubmission",
-    //   name: "Dernière soumission",
-    //   stat: insights.lastSubmissionAt
-    //     ? timeSince(insights.lastSubmissionAt)
-    //     : "--",
-    //   smallerText: true,
-    //   toolTipText: undefined,
-    // },
+    {
+      id: "finished",
+      name: "Ayant tout soumis",
+      stat: summaryStats
+        ? `${summaryStats.finished} (${Math.round(
+            (summaryStats.finished / summaryStats.opened) * 100
+          )}%)`
+        : 0,
+      smallerText: true,
+      toolTipText: undefined,
+    },
   ];
 
   const exportSourcing = async () => {

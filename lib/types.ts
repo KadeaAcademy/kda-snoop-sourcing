@@ -142,6 +142,7 @@ export type submissionCompletedEvent = {
   type: "submissionCompleted";
   data: {
     user: User;
+    formId: string;
   };
 };
 export type openFormEvent = {

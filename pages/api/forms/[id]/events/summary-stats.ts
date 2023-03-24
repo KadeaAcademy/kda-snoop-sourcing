@@ -26,6 +26,7 @@ export default async function handle(
 
     const candidatesOpened = [];
     const candidatesSubmitted = [];
+    const candidatesFinished = [];
     const cOpenEvents = await prisma.sessionEvent.findMany({
       where: {
         AND: [
@@ -39,6 +40,39 @@ export default async function handle(
         ],
       },
     });
+
+    const cFinishedEvents = await prisma.sessionEvent.findMany({
+      where: {
+        AND: [
+          { type: "submissionCompletedEvent" },
+          {
+            data: {
+              path: ["formId"],
+              string_contains: formId,
+            },
+          },
+        ],
+      },
+    });
+
+
+    await Promise.all(cFinishedEvents.map(async({data}) => {
+      const candidate = await prisma.user.findUnique({
+        select: {
+          firstname: true,
+          lastname: true,
+          gender: true,
+          phone: true,
+          email: true,
+          whatsapp: true,
+        },
+        where: {
+          id: data.candidateId
+        }
+      })
+      candidatesFinished.push(candidate)
+    }))
+
 
     await Promise.all(cOpenEvents.map(async({data}) => {
       const candidate = await prisma.user.findUnique({
@@ -125,9 +159,11 @@ export default async function handle(
     return res.json({
       opened: cOpenEvents.length,
       submitted: countSubmitted,
+      finished: cFinishedEvents.length,
       pages,
       candidatesOpened,
-      candidatesSubmitted
+      candidatesSubmitted,
+      candidatesFinished
     });
   }
 
