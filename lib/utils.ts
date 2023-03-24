@@ -270,7 +270,7 @@ export const getFormState = (pages, candidateSubmissions, user) => {
   return formProgress;
 };
 
-export const getFormPages = ( blocks, formId ) => {
+export const getFormPages = (blocks, formId) => {
   const pages = [];
   let currentPage = {
     id: formId, // give the first page the formId as id by default
@@ -299,7 +299,7 @@ export const getFormPages = ( blocks, formId ) => {
   pages.push(currentPage);
 
   return pages;
-}
+};
 
 export const reformatBlocks = (blocks) => {
   let tempBlocks = {};
@@ -307,7 +307,7 @@ export const reformatBlocks = (blocks) => {
     tempBlocks[block.id] = { type: block.type, data: block.data };
   });
   return tempBlocks;
-}
+};
 
 export const formatPages = (pages: any[]) => {
   let tempPages = {};
@@ -318,5 +318,56 @@ export const formatPages = (pages: any[]) => {
     };
   });
   return tempPages;
-}
+};
 
+export async function setCandidateSubmissionCompletedEvent(
+  id,
+  formId: string,
+  pagesSubmited: any[],
+  formTotalPages: number,
+  events: any
+) {
+  const candidateSubmissionCompleted = await prisma.sessionEvent.findFirst({
+    where: {
+      AND: [
+        { type: "submissionCompletedEvent" },
+        {
+          data: {
+            path: ["candidateId"],
+            equals: id,
+          },
+        },
+        {
+          data: {
+            path: ["formId"],
+            equals: formId,
+          },
+        },
+      ],
+    },
+  });
+
+
+  if (
+    !candidateSubmissionCompleted &&
+    pagesSubmited.length === formTotalPages
+  ) {
+    events[0].data.type = "submissionCompletedEvent";
+    await prisma.sessionEvent.create({
+      data: {
+        type: "submissionCompletedEvent",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        data: {
+          user: id,
+          formId,
+          candidateId: id,
+        },
+        submissionSession: {
+          connect: { id: events[0].data.submissionSessionId },
+        },
+      },
+    });
+    events[0].type = "pageSubmissionevents";
+  }
+}

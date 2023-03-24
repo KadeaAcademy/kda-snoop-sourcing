@@ -2,7 +2,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
 import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
-import { formatPages, getFormPages } from "../../../../lib/utils";
+import {
+  formatPages,
+  getFormPages,
+  setCandidateSubmissionCompletedEvent,
+} from "../../../../lib/utils";
 import { prisma } from "../../../../lib/prisma";
 import { computeScore } from "../../../../lib/computeScore";
 
@@ -91,6 +95,8 @@ export default async function handle(
         const candidateEvents = allEvents.filter(({ data }) => {
           return data?.candidateId === candidate.id;
         });
+        let pagesSubmited = [];
+        const formTotalPages = Object.keys(pagesFormated).length - 1;
 
         const candidateLastEvent = candidateEvents;
         candidateLastEvent.map((event) => {
@@ -101,6 +107,12 @@ export default async function handle(
             : 0;
           const isFinanceStep = pageTitle?.toLowerCase().includes("finance");
           let candidateResponse = {};
+
+          const ispageExistInPagesSubmited = pagesSubmited.findIndex(
+            (title) => title === pageTitle
+          );
+          if (ispageExistInPagesSubmited < 0 && pageTitle)
+            pagesSubmited.push(pageTitle);
 
           if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
             if (event.data["submission"]) {
@@ -156,9 +168,17 @@ export default async function handle(
           }
         });
 
+        await setCandidateSubmissionCompletedEvent(
+          candidate.id,
+          formId,
+          pagesSubmited,
+          formTotalPages,
+          events
+        );
 
         const error = validateEvents(events);
-        if (error) {submissions
+        if (error) {
+          submissions;
           const { status, message } = error;
           return res.status(status).json({ error: message });
         }
@@ -172,7 +192,7 @@ export default async function handle(
             formName: form.name,
             submissions,
           };
-          
+
           delete event.data.createdAt;
           delete event.data.updatedAt;
           delete event.data.ownerId;
@@ -181,7 +201,7 @@ export default async function handle(
           delete event.data.description;
           delete event.data.dueDate;
           delete event.data.schema;
-          event.type = "scoreSummary"
+          event.type = "scoreSummary";
           const candidateEvent = { user: candidate, ...event };
 
           updateCandidatesEvents.push({

@@ -1,8 +1,12 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
-import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
-import { formatPages, getFormPages } from "../../../../lib/utils";
+import type { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
+import {
+  formatPages,
+  getFormPages,
+  setCandidateSubmissionCompletedEvent,
+} from "../../../../lib/utils";
 import { prisma } from "../../../../lib/prisma";
 
 ///api/submissionsession
@@ -138,7 +142,13 @@ export default async function handle(
       }
     });
 
-    await setCandidateSubmissionCompletedEvent(session.user.id, formId, pagesSubmited, formTotalPages, events);
+    await setCandidateSubmissionCompletedEvent(
+      session.user.id,
+      formId,
+      pagesSubmited,
+      formTotalPages,
+      events
+    );
 
     const error = validateEvents(events);
     if (error) {
@@ -146,17 +156,22 @@ export default async function handle(
       return res.status(status).json({ error: message });
     }
     res.json({ success: true });
-      events[0].data = { ...events[0].data, formId, formName: form.name, submissions };
-      delete events[0].data.createdAt;
-      delete events[0].data.updatedAt;
-      delete events[0].data.ownerId;
-      delete events[0].data.formType;
-      delete events[0].data.answeringOrder;
-      delete events[0].data.description;
-      delete events[0].data.dueDate;
-      delete events[0].data.schema;
-      const candidateEvent = { user: session.user, ...events[0] };
-      processApiEvent(candidateEvent, formId, session.user.id);
+    events[0].data = {
+      ...events[0].data,
+      formId,
+      formName: form.name,
+      submissions,
+    };
+    delete events[0].data.createdAt;
+    delete events[0].data.updatedAt;
+    delete events[0].data.ownerId;
+    delete events[0].data.formType;
+    delete events[0].data.answeringOrder;
+    delete events[0].data.description;
+    delete events[0].data.dueDate;
+    delete events[0].data.schema;
+    const candidateEvent = { user: session.user, ...events[0] };
+    processApiEvent(candidateEvent, formId, session.user.id);
   }
   // Unknown HTTP Method
   else {
@@ -165,49 +180,3 @@ export default async function handle(
     );
   }
 }
-async function setCandidateSubmissionCompletedEvent(id, formId: string, pagesSubmited: any[], formTotalPages: number, events: any) {
-  const candidateSubmissionCompleted = await prisma.sessionEvent.findFirst({
-    where: {
-      AND: [
-        { type: "submissionCompletedEvent" },
-        {
-          data: {
-            path: ["candidateId"],
-            equals: id,
-          },
-        },
-        {
-          data: {
-            path: ["formId"],
-            equals: formId,
-          },
-        },
-      ],
-    },
-  });
-
-
-
-  if (!candidateSubmissionCompleted &&
-    pagesSubmited.length === formTotalPages) {
-    events[0].data.type = "submissionCompletedEvent";
-    
-    await prisma.sessionEvent.create({
-      data: {
-        type: "submissionCompletedEvent",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        data: {
-          user: id,
-          formId,
-          candidateId: id
-        },
-        submissionSession: {
-          connect: { id: events[0].data.submissionSessionId },
-        },
-      },
-    });
-    events[0].type = "pageSubmissionevents";
-  }
-}
-
