@@ -6,6 +6,7 @@ import {
   formatPages,
   formatScoreSummary,
   getFormPages,
+  mapDecisionStepsValues,
   setCandidateSubmissionCompletedEvent,
 } from "../../../../lib/utils";
 import { prisma } from "../../../../lib/prisma";
@@ -131,27 +132,7 @@ export default async function handle(
                 candidateResponse[question] = response;
               });
               // event.data["submission"]["score"] = goodAnswer / length;
-              if (isFinanceStep) {
-                if (
-                  Object.values(candidateResponse)
-                    [Object.values(candidateResponse).length - 1]?.split(" ")[1]
-                    ?.replace("*", "")
-                    ?.includes("pr")
-                ) {
-                  submissions[pageTitle] = "p";
-                } else {
-                  submissions[pageTitle] = parseInt(
-                    Object.values(candidateResponse)
-                      [Object.values(candidateResponse).length - 1]?.split(
-                        " "
-                      )[1]
-                      ?.replace("*", ""),
-                    10
-                  );
-                }
-              } else {
-                submissions[pageTitle] = (goodAnswer / length) * 100;
-              }
+              mapDecisionStepsValues(isFinanceStep, candidateResponse, submissions, pageTitle, goodAnswer, length);
             }
           }
         });
@@ -230,5 +211,6 @@ export default async function handle(
 
   res.json({ success: true });
 }
+
 
 

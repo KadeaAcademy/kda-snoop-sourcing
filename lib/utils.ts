@@ -389,3 +389,23 @@ export const formatScoreSummary = (events: any, formId: string, form, submission
   delete events[0].data.dueDate;
   delete events[0].data.schema;
 }
+
+export const mapDecisionStepsValues = (isFinanceStep: any, candidateResponse: {}, submissions: {}, pageTitle: any, goodAnswer: number, length: number) => {
+  if (isFinanceStep) {
+    if (Object.values(candidateResponse)[Object.values(candidateResponse).length - 1]?.split(" ")[1]
+      ?.replace("*", "")
+      ?.includes("pr")) {
+      submissions[pageTitle] = "p";
+    } else {
+      submissions[pageTitle] = parseInt(
+        Object.values(candidateResponse)[Object.values(candidateResponse).length - 1]?.split(
+          " "
+        )[1]
+          ?.replace("*", ""),
+        10
+      );
+    }
+  } else {
+    submissions[pageTitle] = (goodAnswer / length) * 100;
+  }
+}
