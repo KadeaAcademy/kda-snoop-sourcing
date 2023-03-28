@@ -1,7 +1,7 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
-import type { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
+import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
 import {
   formatPages,
   getFormPages,

@@ -371,3 +371,21 @@ export async function setCandidateSubmissionCompletedEvent(
     events[0].type = "pageSubmissionevents";
   }
 }
+
+export const formatScoreSummary = (events: any, formId: string, form, submissions: {}) => {
+  events[0].data = {
+    ...events[0].data,
+    formId,
+    formName: form.name,
+    submissions,
+  };
+
+  delete events[0].data.createdAt;
+  delete events[0].data.updatedAt;
+  delete events[0].data.ownerId;
+  delete events[0].data.formType;
+  delete events[0].data.answeringOrder;
+  delete events[0].data.description;
+  delete events[0].data.dueDate;
+  delete events[0].data.schema;
+}

@@ -4,6 +4,7 @@ import NextCors from "nextjs-cors";
 import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
 import {
   formatPages,
+  formatScoreSummary,
   getFormPages,
   setCandidateSubmissionCompletedEvent,
 } from "../../../../lib/utils";
@@ -98,8 +99,7 @@ export default async function handle(
         let pagesSubmited = [];
         const formTotalPages = Object.keys(pagesFormated).length - 1;
 
-        const candidateLastEvent = candidateEvents;
-        candidateLastEvent.map((event) => {
+        candidateEvents.map((event) => {
           const pageTitle = pagesFormated[event.data["pageName"]]?.title;
           let goodAnswer = 0;
           const length = event.data["submission"]
@@ -183,26 +183,9 @@ export default async function handle(
           return res.status(status).json({ error: message });
         }
 
-        for (const event of events) {
-          // event.data =  {...event.data, ...form, submissions}
-          event.data.type = "scoreSummary";
-          event.data = {
-            ...event.data,
-            formId,
-            formName: form.name,
-            submissions,
-          };
-
-          delete event.data.createdAt;
-          delete event.data.updatedAt;
-          delete event.data.ownerId;
-          delete event.data.formType;
-          delete event.data.answeringOrder;
-          delete event.data.description;
-          delete event.data.dueDate;
-          delete event.data.schema;
-          event.type = "scoreSummary";
-          const candidateEvent = { user: candidate, ...event };
+          formatScoreSummary(events, formId, form, submissions);
+          events[0].type = "scoreSummary";
+          const candidateEvent = { user: candidate, ...events[0] };
 
           updateCandidatesEvents.push({
             candidateEvent,
@@ -210,7 +193,6 @@ export default async function handle(
             candidateId: candidate.id,
             candidateName: `${candidate.firstname} - ${candidate.lastname}`,
           });
-        }
       } else {
         throw new Error(
           `The HTTP ${req.method} method is not supported by this route.`
@@ -248,3 +230,5 @@ export default async function handle(
 
   res.json({ success: true });
 }
+
+
