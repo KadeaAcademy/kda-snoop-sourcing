@@ -3,6 +3,7 @@ import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
 import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
 import {
+  computeStepScore,
   formatPages,
   getFormPages,
   setCandidateSubmissionCompletedEvent,
@@ -91,42 +92,8 @@ export default async function handle(
         pagesSubmited.push(pageTitle);
 
       if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
-        if (event.data["submission"]) {
-          Object.keys(event.data["submission"]).map((key) => {
-            const submission = {};
-            const response = event.data["submission"][key];
-            goodAnswer =
-              pagesFormated[event.data["pageName"]].blocks[key]?.data
-                ?.response === response
-                ? goodAnswer + 1
-                : goodAnswer;
+        computeStepScore(pageTitle, isFinanceStep, event, goodAnswer, pagesFormated, candidateResponse, submissions, length);
 
-            const question =
-              pagesFormated[event.data["pageName"]].blocks[key]?.data.label;
-            submission[question] = response;
-            candidateResponse[question] = response;
-          });
-
-          if (isFinanceStep) {
-            if (
-              Object.values(candidateResponse)
-                [Object.values(candidateResponse).length - 1]?.split(" ")[1]
-                ?.replace("*", "")
-                ?.includes("pr")
-            ) {
-              submissions[pageTitle] = "p";
-            } else {
-              submissions[pageTitle] = parseInt(
-                Object.values(candidateResponse)
-                  [Object.values(candidateResponse).length - 1]?.split(" ")[1]
-                  ?.replace("*", ""),
-                10
-              );
-            }
-          } else {
-            submissions[pageTitle] = (goodAnswer / length) * 100;
-          }
-        }
       }
     });
 

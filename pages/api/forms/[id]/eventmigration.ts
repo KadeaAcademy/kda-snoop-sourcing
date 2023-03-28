@@ -1,16 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
 import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
 import {
+  computeStepScore,
   formatPages,
   formatScoreSummary,
   getFormPages,
-  mapDecisionStepsValues,
   setCandidateSubmissionCompletedEvent,
 } from "../../../../lib/utils";
 import { prisma } from "../../../../lib/prisma";
-import { computeScore } from "../../../../lib/computeScore";
 
 ///api/submissionsession
 export default async function handle(
@@ -115,26 +113,7 @@ export default async function handle(
           if (ispageExistInPagesSubmited < 0 && pageTitle)
             pagesSubmited.push(pageTitle);
 
-          if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
-            if (event.data["submission"]) {
-              Object.keys(event.data["submission"]).map((key) => {
-                const submission = {};
-                const response = event.data["submission"][key];
-                goodAnswer =
-                  pagesFormated[event.data["pageName"]].blocks[key]?.data
-                    ?.response === response
-                    ? goodAnswer + 1
-                    : goodAnswer;
-
-                const question =
-                  pagesFormated[event.data["pageName"]].blocks[key]?.data.label;
-                submission[question] = response;
-                candidateResponse[question] = response;
-              });
-              // event.data["submission"]["score"] = goodAnswer / length;
-              mapDecisionStepsValues(isFinanceStep, candidateResponse, submissions, pageTitle, goodAnswer, length);
-            }
-          }
+          computeStepScore(pageTitle, isFinanceStep, event, goodAnswer, pagesFormated, candidateResponse, submissions, length);
         });
 
         Object.values(pagesFormated).map(({ title }) => {
@@ -156,6 +135,7 @@ export default async function handle(
           formTotalPages,
           events
         );
+
 
         const error = validateEvents(events);
         if (error) {
@@ -211,6 +191,7 @@ export default async function handle(
 
   res.json({ success: true });
 }
+
 
 
 

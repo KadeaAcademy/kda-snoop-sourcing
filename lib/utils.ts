@@ -347,7 +347,6 @@ export async function setCandidateSubmissionCompletedEvent(
     },
   });
 
-
   if (
     !candidateSubmissionCompleted &&
     pagesSubmited.length === formTotalPages
@@ -372,7 +371,12 @@ export async function setCandidateSubmissionCompletedEvent(
   }
 }
 
-export const formatScoreSummary = (events: any, formId: string, form, submissions: {}) => {
+export const formatScoreSummary = (
+  events: any,
+  formId: string,
+  form,
+  submissions: {}
+) => {
   events[0].data = {
     ...events[0].data,
     formId,
@@ -388,19 +392,28 @@ export const formatScoreSummary = (events: any, formId: string, form, submission
   delete events[0].data.description;
   delete events[0].data.dueDate;
   delete events[0].data.schema;
-}
+};
 
-export const mapDecisionStepsValues = (isFinanceStep: any, candidateResponse: {}, submissions: {}, pageTitle: any, goodAnswer: number, length: number) => {
+export const mapDecisionStepsValues = (
+  isFinanceStep: any,
+  candidateResponse: {},
+  submissions: {},
+  pageTitle: any,
+  goodAnswer: number,
+  length: number
+) => {
   if (isFinanceStep) {
-    if (Object.values(candidateResponse)[Object.values(candidateResponse).length - 1]?.split(" ")[1]
-      ?.replace("*", "")
-      ?.includes("pr")) {
+    if (
+      Object.values(candidateResponse)
+        [Object.values(candidateResponse).length - 1]?.split(" ")[1]
+        ?.replace("*", "")
+        ?.includes("pr")
+    ) {
       submissions[pageTitle] = "p";
     } else {
       submissions[pageTitle] = parseInt(
-        Object.values(candidateResponse)[Object.values(candidateResponse).length - 1]?.split(
-          " "
-        )[1]
+        Object.values(candidateResponse)
+          [Object.values(candidateResponse).length - 1]?.split(" ")[1]
           ?.replace("*", ""),
         10
       );
@@ -408,4 +421,43 @@ export const mapDecisionStepsValues = (isFinanceStep: any, candidateResponse: {}
   } else {
     submissions[pageTitle] = (goodAnswer / length) * 100;
   }
-}
+};
+
+export const computeStepScore = (
+  pageTitle: any,
+  isFinanceStep: any,
+  event,
+  goodAnswer: number,
+  pagesFormated: {},
+  candidateResponse: {},
+  submissions: {},
+  length: number
+) => {
+  if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
+    if (event.data["submission"]) {
+      Object.keys(event.data["submission"]).map((key) => {
+        const submission = {};
+        const response = event.data["submission"][key];
+        goodAnswer =
+          pagesFormated[event.data["pageName"]].blocks[key]?.data?.response ===
+          response
+            ? goodAnswer + 1
+            : goodAnswer;
+
+        const question =
+          pagesFormated[event.data["pageName"]].blocks[key]?.data.label;
+        submission[question] = response;
+        candidateResponse[question] = response;
+      });
+      mapDecisionStepsValues(
+        isFinanceStep,
+        candidateResponse,
+        submissions,
+        pageTitle,
+        goodAnswer,
+        length
+      );
+    }
+  }
+  return goodAnswer;
+};
