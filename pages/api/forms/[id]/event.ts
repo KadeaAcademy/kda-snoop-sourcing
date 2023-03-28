@@ -5,6 +5,7 @@ import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
 import {
   computeStepScore,
   formatPages,
+  formatScoreSummary,
   getFormPages,
   setCandidateSubmissionCompletedEvent,
 } from "../../../../lib/utils";
@@ -129,14 +130,7 @@ export default async function handle(
       formName: form.name,
       submissions,
     };
-    delete events[0].data.createdAt;
-    delete events[0].data.updatedAt;
-    delete events[0].data.ownerId;
-    delete events[0].data.formType;
-    delete events[0].data.answeringOrder;
-    delete events[0].data.description;
-    delete events[0].data.dueDate;
-    delete events[0].data.schema;
+    formatScoreSummary(events, formId, form, submissions);
     const candidateEvent = { user: session.user, ...events[0] };
     processApiEvent(candidateEvent, formId, session.user.id);
   }

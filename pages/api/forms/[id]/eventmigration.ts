@@ -7,6 +7,7 @@ import {
   formatScoreSummary,
   getFormPages,
   setCandidateSubmissionCompletedEvent,
+  syncCandidatesEvents,
 } from "../../../../lib/utils";
 import { prisma } from "../../../../lib/prisma";
 
@@ -86,6 +87,9 @@ export default async function handle(
     ],
   });
 
+  let flag = 0;
+  const NB_QUERIES = 1;
+
   Promise.all(
     candidates.map(async (candidate) => {
       const submissions = {};
@@ -161,34 +165,8 @@ export default async function handle(
       }
     })
   ).then(() => {
-    syncCandidatesEvents(updateCandidatesEvents);
+    syncCandidatesEvents(updateCandidatesEvents, flag, NB_QUERIES, processApiEvent);
   });
-
-  let flag = 0;
-  const NB_QUERIES = 1;
-  const syncCandidatesEvents = (updateCandidatesEvents) => {
-    Promise.all(
-      updateCandidatesEvents
-        .slice(flag, flag + NB_QUERIES)
-        .map((updateCandidateEvent) => {
-          return processApiEvent(
-            updateCandidateEvent.candidateEvent,
-            updateCandidateEvent.formId,
-            updateCandidateEvent.candidateId
-          );
-        })
-    ).then(() => {
-      flag += NB_QUERIES;
-      if (flag < updateCandidatesEvents.length) {
-        setTimeout(() => {
-          syncCandidatesEvents(updateCandidatesEvents);
-        }, 1000);
-      }
-    });
-  };
-
-  // await  processApiEvent(candidateEvent, formId, candidate.id);
-
   res.json({ success: true });
 }
 

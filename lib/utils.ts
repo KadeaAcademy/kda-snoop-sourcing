@@ -461,3 +461,25 @@ export const computeStepScore = (
   }
   return goodAnswer;
 };
+
+ 
+export const syncCandidatesEvents = (updateCandidatesEvents, flag, NB_QUERIES, processApiEvent) => {
+  Promise.all(
+    updateCandidatesEvents
+      .slice(flag, flag + NB_QUERIES)
+      .map((updateCandidateEvent) => {
+        return processApiEvent(
+          updateCandidateEvent.candidateEvent,
+          updateCandidateEvent.formId,
+          updateCandidateEvent.candidateId
+        );
+      })
+  ).then(() => {
+    flag += NB_QUERIES;
+    if (flag < updateCandidatesEvents.length) {
+      setTimeout(() => {
+        syncCandidatesEvents(updateCandidatesEvents, flag, NB_QUERIES, processApiEvent);
+      }, 1000);
+    }
+  });
+};
