@@ -120,7 +120,7 @@ const MultipleChoiceQuestion = (props) => {
                       choiceData.multipleChoice
                         ? "rounded-full"
                         : "rounded-full",
-                      "flex items-center justify-center w-4 h-4 bg-white border border-gray-300 max-sm:h-3 max-sm:w-3  max-sm:mt-1"
+                      "cursor-pointer flex items-center justify-center w-4 h-4 bg-white border border-gray-300 max-sm:h-3 max-sm:w-3  max-sm:mt-1"
                     )}
                     aria-hidden="true"
                     onClick={onInputChange("response", option.label)}
