@@ -31,7 +31,7 @@ export default function UpdateProfile() {
   }, [session]);
 
   const handleBlur = (e, source) => {
-    if(e.target.value === "") toast.error("Renseignez votre " +`'${source}'`);
+    if (e.target.value === "") toast.error("Renseignez votre " + `'${source}'`);
   };
 
   const handleInputChange = (e) => {
@@ -72,15 +72,23 @@ export default function UpdateProfile() {
     let photo;
     file ? (photo = (await upload(file)).Location) : "";
 
-    try {
-      let userUpdateData = user;
-      userUpdateData.dob = new Date(userUpdateData.dob);
-      delete userUpdateData.address;
-      await updateUser(userUpdateData, address);
-      toast.success("Votre profil a bien été mis à jour");
-      router.push(`${next}`);
-    } catch (e) {
-      toast(e.message);
+    if (e.target.elements.province.value == "Votre province") {
+      toast.warn("Veuillez préciser votre province");
+    } else {
+      try {
+        let userUpdateData = user;
+        userUpdateData.dob = new Date(userUpdateData.dob);
+        delete userUpdateData.address;
+        const res = await updateUser(userUpdateData, address);
+        if (res.status != 200) {
+          toast.error("Erreur, veuillez ressayer");
+        } else {
+          toast.success("Votre profil a bien été mis à jour");
+          router.push(`${next}`);
+        }
+      } catch (e) {
+        toast(e.message);
+      }
     }
   };
 
@@ -254,7 +262,7 @@ export default function UpdateProfile() {
                           type="text"
                           value={address ? address.line2 : ""}
                           onChange={handleInputChange}
-                          onBlur={(e) => handleBlur(e, "une référence d'adresse")}
+                          onBlur={(e) =>handleBlur(e, "une référence d'adresse")}
                           placeholder="Réf. Silikin Village, Concession COTEX"
                           className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                         />
@@ -292,11 +300,14 @@ export default function UpdateProfile() {
                         <select
                           name="province"
                           id="province"
-                          value={address ? address.province : ""}
                           onChange={handleInputChange}
                           onBlur={(e) => handleBlur(e, "Province")}
+                          required
                           className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                         >
+                          <option disabled selected hidden>
+                            Votre province
+                          </option>
                           {Object.keys(DRCProvinces).map((province, key) => (
                             <option key={key} value={province}>
                               {DRCProvinces[province]}
