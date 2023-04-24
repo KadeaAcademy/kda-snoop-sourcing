@@ -108,17 +108,15 @@ export default function ResultsSummary({ formId }) {
     await Promise.all(
       Object.keys(pagesFormated).map(async (key) => {
         if (pagesFormated[key].title) {
-          await getPageQuestionsDatas(formId, key, pagesFormated[key].title)
-            .then((res) => res.json())
-            .then(({ Data }) => {
-              formDataTampon.push({
-                sheetName: pagesFormated[key].title.slice(0, 30),
-                details: [...Data],
-              });
-            });
+        const dataResponse = await  (await getPageQuestionsDatas(formId, key, pagesFormated[key].title)).json()
+        formDataTampon.push({
+          sheetName: pagesFormated[key].title.slice(0, 30),
+          details: [...dataResponse.Data],
+        });
         }
       })
     );
+    
     exportToExcel(formDataTampon, form.name, true);
     setExportingSummary(false);
   };
