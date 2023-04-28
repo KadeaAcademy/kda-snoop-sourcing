@@ -147,7 +147,7 @@ export function WebhookSettings({ pipeline, setPipeline }) {
                         type="checkbox"
                         checked={pipeline.events.includes(eventType.id)}
                         onChange={() => toggleEvent(eventType.id)}
-                        className="w-4 h-4 text-red-600 border-gray-300 rounded-sm focus:ring-red-500"
+                        className="w-4 h-4 text-red-600 border-gray-300 rounded-full focus:ring-red-500"
                       />
                     </div>
                     <div className="ml-3 text-sm">

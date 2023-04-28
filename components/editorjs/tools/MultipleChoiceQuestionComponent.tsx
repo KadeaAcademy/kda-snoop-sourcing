@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Switch } from "@headlessui/react";
-import { TrashIcon, PhotoIcon } from "@heroicons/react/24/solid";
+import { TrashIcon, PhotoIcon, CheckIcon } from "@heroicons/react/24/solid";
 import { default as React } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { classNames } from "../../../lib/utils";
@@ -62,12 +62,19 @@ const MultipleChoiceQuestion = (props) => {
     updateData(newData);
   };
 
-  const onInputChange = (fieldName) => {
+  const onInputChange = (fieldName, value?: string) => {
     return (e) => {
       const newData = {
         ...choiceData,
       };
-      newData[fieldName] = e.currentTarget.value;
+      if (fieldName === "response" && value) {
+        const valueExist = newData[fieldName].includes(value);
+        newData[fieldName] = valueExist
+          ? newData[fieldName].replace(`/${value}`, "")
+          : `${newData[fieldName]}/${value}`;
+      } else {
+        newData[fieldName] = e.currentTarget.value;
+      }
       updateData(newData);
     };
   };
@@ -113,9 +120,10 @@ const MultipleChoiceQuestion = (props) => {
                       choiceData.multipleChoice
                         ? "rounded-full"
                         : "rounded-full",
-                      "flex items-center justify-center w-4 h-4 bg-white border border-gray-300 max-sm:h-3 max-sm:w-3  max-sm:mt-1"
+                      "cursor-pointer flex items-center justify-center w-4 h-4 bg-white border border-gray-300 max-sm:h-3 max-sm:w-3  max-sm:mt-1"
                     )}
                     aria-hidden="true"
+                    onClick={onInputChange("response", option.label)}
                   >
                     <span className="rounded-full bg-white w-1.5 h-1.5 max-sm:w-2.5" />
                   </span>
@@ -149,6 +157,11 @@ const MultipleChoiceQuestion = (props) => {
                     </button>
                   )}
                 </div>
+                {choiceData.response.includes(option.label) && (
+                  <span className="flex ml-10 rounded-full items-center justify-center w-8 h-5 bg-green-600 border  max-sm:h-3 max-sm:w-3  max-sm:mt-1">
+                    <CheckIcon className="w-4 h-4 text-white " />
+                  </span>
+                )}
               </div>
             )
         )}
@@ -198,22 +211,6 @@ const MultipleChoiceQuestion = (props) => {
             </span>
           </Switch.Label>
         </Switch.Group>
-      </div>
-      <div className="relative z-0 flex mt-2  ">
-        <label
-          className="block mr-2  p-0 mt-2 text-md font-semi-bold text-gray-800 border-0 border-transparent ring-0 "
-          htmlFor="response"
-        >
-          Bonne réponse :
-        </label>
-        <input
-          type="text"
-          id="response"
-          defaultValue={choiceData.response}
-          onBlur={onInputChange("response")}
-          className="block w-full max-w-sm p-0 pl-2 mt-2 text-sm font-light text-green-600 border-0 border-transparent ring-0 focus:ring-0 placeholder:text-gray-300"
-          placeholder="Réponse"
-        />
       </div>
     </div>
   );

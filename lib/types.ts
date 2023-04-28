@@ -140,11 +140,14 @@ export type submissionCompletedEvent = {
   createdAt: string;
   updatedAt: string;
   type: "submissionCompleted";
-  data: { [key: string]: string };
+  data: {
+    user: User;
+    formId: string;
+  };
 };
 export type openFormEvent = {
   id?: string;
-  type: "formOpened";
+  txype: "formOpened";
   createdAt?: Date;
   updatedAt?: Date;
   data: {

@@ -270,7 +270,7 @@ export const getFormState = (pages, candidateSubmissions, user) => {
   return formProgress;
 };
 
-export const getFormPages = ( blocks, formId ) => {
+export const getFormPages = (blocks, formId) => {
   const pages = [];
   let currentPage = {
     id: formId, // give the first page the formId as id by default
@@ -299,7 +299,7 @@ export const getFormPages = ( blocks, formId ) => {
   pages.push(currentPage);
 
   return pages;
-}
+};
 
 export const reformatBlocks = (blocks) => {
   let tempBlocks = {};
@@ -307,7 +307,7 @@ export const reformatBlocks = (blocks) => {
     tempBlocks[block.id] = { type: block.type, data: block.data };
   });
   return tempBlocks;
-}
+};
 
 export const formatPages = (pages: any[]) => {
   let tempPages = {};
@@ -318,5 +318,168 @@ export const formatPages = (pages: any[]) => {
     };
   });
   return tempPages;
+};
+
+export async function setCandidateSubmissionCompletedEvent(
+  id,
+  formId: string,
+  pagesSubmited: any[],
+  formTotalPages: number,
+  events: any
+) {
+  const candidateSubmissionCompleted = await prisma.sessionEvent.findFirst({
+    where: {
+      AND: [
+        { type: "submissionCompletedEvent" },
+        {
+          data: {
+            path: ["candidateId"],
+            equals: id,
+          },
+        },
+        {
+          data: {
+            path: ["formId"],
+            equals: formId,
+          },
+        },
+      ],
+    },
+  });
+
+  if (
+    !candidateSubmissionCompleted &&
+    pagesSubmited.length === formTotalPages
+  ) {
+    events[0].data.type = "submissionCompletedEvent";
+    await prisma.sessionEvent.create({
+      data: {
+        type: "submissionCompletedEvent",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        data: {
+          user: id,
+          formId,
+          candidateId: id,
+        },
+        submissionSession: {
+          connect: { id: events[0].data.submissionSessionId },
+        },
+      },
+    });
+    events[0].type = "pageSubmissionevents";
+  }
 }
 
+export const formatScoreSummary = (
+  events: any,
+  formId: string,
+  form,
+  submissions: {}
+) => {
+  events[0].data = {
+    ...events[0].data,
+    formId,
+    formName: form.name,
+    submissions,
+  };
+
+  delete events[0].data.createdAt;
+  delete events[0].data.updatedAt;
+  delete events[0].data.ownerId;
+  delete events[0].data.formType;
+  delete events[0].data.answeringOrder;
+  delete events[0].data.description;
+  delete events[0].data.dueDate;
+  delete events[0].data.schema;
+};
+
+export const mapDecisionStepsValues = (
+  isFinanceStep: any,
+  candidateResponse: {},
+  submissions: {},
+  pageTitle: any,
+  goodAnswer: number,
+  length: number
+) => {
+  if (isFinanceStep) {
+    if (
+      Object.values(candidateResponse)
+        [Object.values(candidateResponse).length - 1]?.split(" ")[1]
+        ?.replace("*", "")
+        ?.includes("pr")
+    ) {
+      submissions[pageTitle] = "p";
+    } else {
+      submissions[pageTitle] = parseInt(
+        Object.values(candidateResponse)
+          [Object.values(candidateResponse).length - 1]?.split(" ")[1]
+          ?.replace("*", ""),
+        10
+      );
+    }
+  } else {
+    submissions[pageTitle] = (goodAnswer / length) * 100;
+  }
+};
+
+export const computeStepScore = (
+  pageTitle: any,
+  isFinanceStep: any,
+  event,
+  goodAnswer: number,
+  pagesFormated: {},
+  candidateResponse: {},
+  submissions: {},
+  length: number
+) => {
+  if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
+    if (event.data["submission"]) {
+      Object.keys(event.data["submission"]).map((key) => {
+        const submission = {};
+        const response = event.data["submission"][key];
+        goodAnswer =
+          pagesFormated[event.data["pageName"]].blocks[key]?.data?.response ===
+          response
+            ? goodAnswer + 1
+            : goodAnswer;
+
+        const question =
+          pagesFormated[event.data["pageName"]].blocks[key]?.data.label;
+        submission[question] = response;
+        candidateResponse[question] = response;
+      });
+      mapDecisionStepsValues(
+        isFinanceStep,
+        candidateResponse,
+        submissions,
+        pageTitle,
+        goodAnswer,
+        length
+      );
+    }
+  }
+  return goodAnswer;
+};
+
+ 
+export const syncCandidatesEvents = (updateCandidatesEvents, flag, NB_QUERIES, processApiEvent) => {
+  Promise.all(
+    updateCandidatesEvents
+      .slice(flag, flag + NB_QUERIES)
+      .map((updateCandidateEvent) => {
+        return processApiEvent(
+          updateCandidateEvent.candidateEvent,
+          updateCandidateEvent.formId,
+          updateCandidateEvent.candidateId
+        );
+      })
+  ).then(() => {
+    flag += NB_QUERIES;
+    if (flag < updateCandidatesEvents.length) {
+      setTimeout(() => {
+        syncCandidatesEvents(updateCandidatesEvents, flag, NB_QUERIES, processApiEvent);
+      }, 1000);
+    }
+  });
+};

@@ -2,7 +2,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import NextCors from "nextjs-cors";
 import { processApiEvent, validateEvents } from "../../../../lib/apiEvents";
-import { formatPages, getFormPages } from "../../../../lib/utils";
+import {
+  computeStepScore,
+  formatPages,
+  formatScoreSummary,
+  getFormPages,
+  setCandidateSubmissionCompletedEvent,
+} from "../../../../lib/utils";
 import { prisma } from "../../../../lib/prisma";
 
 ///api/submissionsession
@@ -68,6 +74,8 @@ export default async function handle(
     const { events } = req.body;
 
     candidateEvents = [...events, ...candidateEvents];
+    let pagesSubmited = [];
+    const formTotalPages = Object.keys(pagesFormated).length - 1;
 
     candidateEvents.map((event) => {
       const pageTitle = pagesFormated[event.data["pageName"]]?.title;
@@ -78,43 +86,15 @@ export default async function handle(
       const isFinanceStep = pageTitle?.toLowerCase().includes("finance");
       let candidateResponse = {};
 
-      if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
-        if (event.data["submission"]) {
-          Object.keys(event.data["submission"]).map((key) => {
-            const submission = {};
-            const response = event.data["submission"][key];
-            goodAnswer =
-              pagesFormated[event.data["pageName"]].blocks[key]?.data
-                ?.response === response
-                ? goodAnswer + 1
-                : goodAnswer;
+      const ispageExistInPagesSubmited = pagesSubmited.findIndex(
+        (title) => title === pageTitle
+      );
+      if (ispageExistInPagesSubmited < 0 && pageTitle)
+        pagesSubmited.push(pageTitle);
 
-            const question =
-              pagesFormated[event.data["pageName"]].blocks[key]?.data.label;
-            submission[question] = response;
-            candidateResponse[question] = response;
-          });
-          // event.data["submission"]["score"] = goodAnswer / length;
-          if (isFinanceStep) {
-            if (
-              Object.values(candidateResponse)
-                [Object.values(candidateResponse).length - 1]?.split(" ")[1]
-                ?.replace("*", "")
-                ?.includes("pr")
-            ) {
-              submissions[pageTitle] = "p";
-            } else {
-              submissions[pageTitle] = parseInt(
-                Object.values(candidateResponse)
-                  [Object.values(candidateResponse).length - 1]?.split(" ")[1]
-                  ?.replace("*", ""),
-                10
-              );
-            }
-          } else {
-            submissions[pageTitle] = (goodAnswer / length) * 100;
-          }
-        }
+      if (pageTitle?.toLowerCase().includes("test") || isFinanceStep) {
+        computeStepScore(pageTitle, isFinanceStep, event, goodAnswer, pagesFormated, candidateResponse, submissions, length);
+
       }
     });
 
@@ -130,26 +110,29 @@ export default async function handle(
       }
     });
 
+    await setCandidateSubmissionCompletedEvent(
+      session.user.id,
+      formId,
+      pagesSubmited,
+      formTotalPages,
+      events
+    );
+
     const error = validateEvents(events);
     if (error) {
       const { status, message } = error;
       return res.status(status).json({ error: message });
     }
     res.json({ success: true });
-    for (const event of events) {
-      // event.data =  {...event.data, ...form, submissions}
-      event.data = { ...event.data, formId, formName: form.name, submissions };
-      delete event.data.createdAt;
-      delete event.data.updatedAt;
-      delete event.data.ownerId;
-      delete event.data.formType;
-      delete event.data.answeringOrder;
-      delete event.data.description;
-      delete event.data.dueDate;
-      delete event.data.schema;
-      const candidateEvent = { user: session.user, ...event };
-      processApiEvent(candidateEvent, formId, session.user.id);
-    }
+    events[0].data = {
+      ...events[0].data,
+      formId,
+      formName: form.name,
+      submissions,
+    };
+    formatScoreSummary(events, formId, form, submissions);
+    const candidateEvent = { user: session.user, ...events[0] };
+    processApiEvent(candidateEvent, formId, session.user.id);
   }
   // Unknown HTTP Method
   else {

@@ -65,7 +65,6 @@ export default async function handle(
           gender: true,
           phone: true,
           email: true,
-          phone: true,
           whatsapp: true,
         },
         where:  {
@@ -73,7 +72,7 @@ export default async function handle(
         }
       })
       return {...candidateResponse, submission: pageSubmissions[index].data?.submission, createdAt: pageSubmissions[index].createdAt};
-
+      candidates
     }));
 
     candidates = candidates.sort((candidateA, candidateB) => {
@@ -131,7 +130,7 @@ export default async function handle(
     }
     const page = formPages.filter(({id}) => id === pageId)
 
-    const pageQuestions = page[0].blocks.filter((b) => {
+    const pageQuestions = page[0]?.blocks.filter((b) => {
       const isLabelInHeaders = headerConfig.findIndex(({label}) => label === b.id);
 
       if(isBlockAQuestion(b)){
