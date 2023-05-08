@@ -74,8 +74,8 @@ export default function BaseLayoutManagement({
                         <Image
                           src="/img/kadea_logo.png"
                           alt="Kadea Academy logo"
-                          width={100}
-                          height={40}
+                          width={170}
+                          height={37}
                         />
                       </a>
                     </Link>

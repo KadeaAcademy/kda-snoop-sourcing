@@ -33,7 +33,7 @@ export default function SignIn({}: props) {
                 src="/img/kadea_logo.png"
                 alt="Kadea Academy logo"
                 width={180}
-                height={60}
+                height={40}
               />
             </div>
 
