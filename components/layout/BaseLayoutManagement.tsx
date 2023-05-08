@@ -72,8 +72,8 @@ export default function BaseLayoutManagement({
                     <Link href="/forms/">
                       <a className="text-ui-gray-dark hover:text-ui-gray-dark">
                         <Image
-                          src="/img/kda_logo.png"
-                          alt="kinshasa digital academy logo"
+                          src="/img/kadea_logo.png"
+                          alt="Kadea Academy logo"
                           width={100}
                           height={40}
                         />

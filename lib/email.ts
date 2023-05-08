@@ -25,9 +25,8 @@ export const sendEmail = async (emailData: sendEmailData) => {
     // debug: true,
   });
   const emailDefaults = {
-    from: `Kinshasa Digital Academy <${
-      serverRuntimeConfig.smtpUser || "noreply@kinshasadigital.com" //user:serverRuntimeConfig.mailFrom
-    }>`,
+    from: `Kadea Academy <${serverRuntimeConfig.smtpUser || "noreply@kinshasadigital.com" //user:serverRuntimeConfig.mailFrom
+      }>`,
   };
   await transporter.sendMail({ ...emailDefaults, ...emailData });
 };
@@ -36,17 +35,15 @@ export const sendVerificationEmail = async (user, url = "/sourcings") => {
   const token = createToken(user.id, user.email, {
     expiresIn: "1d",
   });
-  const verifyLink = `${
-    serverRuntimeConfig.nextauthUrl
-  }/auth/verify?token=${encodeURIComponent(
-    token
-  )}&callbackUrl=${encodeURIComponent(url)}`;
+  const verifyLink = `${serverRuntimeConfig.nextauthUrl
+    }/auth/verify?token=${encodeURIComponent(
+      token
+    )}&callbackUrl=${encodeURIComponent(url)}`;
 
-  const verificationRequestLink = `${
-    serverRuntimeConfig.nextauthUrl
-  }/auth/verification-requested?email=${encodeURIComponent(
-    user.email
-  )}&callbackUrl=${encodeURIComponent(url)}`;
+  const verificationRequestLink = `${serverRuntimeConfig.nextauthUrl
+    }/auth/verification-requested?email=${encodeURIComponent(
+      user.email
+    )}&callbackUrl=${encodeURIComponent(url)}`;
   await sendEmail({
     to: user.email,
     subject: "Bienvenue sur le site de KDA Sourcing",
@@ -60,9 +57,8 @@ export const sendForgotPasswordEmail = async (user) => {
   const token = createToken(user.id, user.email, {
     expiresIn: "1d",
   });
-  const verifyLink = `${
-    serverRuntimeConfig.nextauthUrl
-  }/auth/reset-password?token=${encodeURIComponent(token)}`;
+  const verifyLink = `${serverRuntimeConfig.nextauthUrl
+    }/auth/reset-password?token=${encodeURIComponent(token)}`;
   await sendEmail({
     to: user.email,
     subject: "Réinitialiser votre mot de passe KDA Sourcing",

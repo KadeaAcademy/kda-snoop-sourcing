@@ -34,8 +34,8 @@ function Form() {
           <div className='w-full max-w-sm p-8 mx-auto lg:w-96'>
             <div className='w-fit m-auto'>
               <Image
-                src='/img/kda_logo.png'
-                alt='kinshasa digital academy logo'
+                src='/img/kadea_logo.png'
+                alt='Kadea Academy logo'
                 width={180}
                 height={60}
               />
