@@ -14,7 +14,7 @@ function FormsPage({}) {
   }
   return (
     <BaseLayoutManagement
-      title={"Sourcings - KDA"}
+      title={"Sourcings - Kadea"}
       breadcrumbs={[{ name: "Sourcings", href: "#", current: true }]}
     >
       <LimitedWidth>
