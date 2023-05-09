@@ -5,9 +5,10 @@ import {
   CogIcon,
 } from "@heroicons/react/24/solid";
 import { signOut, useSession } from "next-auth/react";
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { classNames } from "../../lib/utils";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 export default function MenuProfile({}) {
   const router = useRouter();
@@ -31,7 +32,7 @@ export default function MenuProfile({}) {
               <Menu.Button className="flex ml-3 text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                 <span className="sr-only">Open user menu</span>
                 <div className="w-8 h-8">
-                  <img
+                  <Image
                     className="rounded-full"
                     src={
                       user.photo ? user.photo : "/img/avatar-placeholder.png"
