@@ -31,7 +31,7 @@ export default function UpdateProfile() {
   }, [session]);
 
   const handleBlur = (e, source) => {
-    if(e.target.value === "") toast.error("Renseignez votre " +`'${source}'`);
+    if (e.target.value === "") toast.error("Renseignez votre " + `'${source}'`);
   };
 
   const handleInputChange = (e) => {
@@ -193,7 +193,7 @@ export default function UpdateProfile() {
                         <input
                           id="dob"
                           name="dob"
-                          value={user.dob ? user.dob.toString().substring(0, 10) : new Date().toISOString().substring(0, 10)}
+                          value={user.dob ? user.dob.toString().substring(0, 10) : ""}
                           onChange={handleInputChange}
                           onBlur={(e) => handleBlur(e, "Date de naissance")}
                           type="date"
@@ -264,7 +264,7 @@ export default function UpdateProfile() {
                           type="text"
                           value={address ? address.line2 : ""}
                           onChange={handleInputChange}
-                          onBlur={(e) => handleBlur(e, "une référence d'adresse")}
+                          onBlur={(e) =>handleBlur(e, "une référence d'adresse")}
                           placeholder="Réf. Silikin Village, Concession COTEX"
                           className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                         />
@@ -305,6 +305,7 @@ export default function UpdateProfile() {
                           value={address ? address.province : "Votre province"}
                           onChange={handleInputChange}
                           onBlur={(e) => handleBlur(e, "Province")}
+                          required
                           className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                         >
                           <option disabled selected hidden>

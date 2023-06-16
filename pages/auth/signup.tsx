@@ -45,6 +45,13 @@ export default function SignUpPage() {
           email: e.target.elements.email.value,
           password: e.target.elements.password.value,
         },
+        {
+          line1: e.target.elements.line1.value,
+          line2: e.target.elements.line2.value,
+          commune:e.target.elements.commune.value,
+          ville:e.target.elements.ville.value,
+          province :e.target.elements.province.value
+        },
         callbackUrl
       );
 
@@ -175,7 +182,7 @@ export default function SignUpPage() {
                   </div>
                   <div>
                     <label
-                      htmlFor="address"
+                    htmlFor="address"
                       className="block text-sm font-medium text-ui-gray-dark"
                     >
                       Adresse
@@ -292,6 +299,7 @@ export default function SignUpPage() {
                       />
                     </div>
                   </div>
+
                   <div>
                     <label
                       htmlFor="email"
@@ -308,6 +316,71 @@ export default function SignUpPage() {
                         required
                         className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                       />
+                    </div>
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="address"
+                      className="block text-sm font-medium text-ui-gray-dark"
+                    >
+                      Adresse
+                    </label>
+                    <div className="mt-1">
+                      <input
+                        id="line1"
+                        name="line1"
+                        type="text"
+                        placeholder="N° 63, Ave Colonel Mondjiba, Q. Basoko"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <input
+                        id="line2"
+                        name="line2"
+                        type="text"
+                        placeholder="Réf. Silikin Village, Concession COTEX"
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <input
+                        id="commune"
+                        name="commune"
+                        type="text"
+                        placeholder="Commune ou Territoire"
+
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+                    
+                    <div className="mt-1">
+                      <input
+                        id="ville"
+                        name="ville"
+                        type="text"
+                        placeholder="Ville"
+                        required
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                    </div>
+
+                    <div className="mt-1">
+                      <select 
+                        name="province"
+                        id="province"
+                        required
+                        value='Sélectionnez votre province'
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture">
+                        
+                        <option value=""  disabled hidden className="block text-sm font-medium text-ui-gray-dark">Sélectionnez votre province</option>
+                        {Object.keys(DRCProvinces).map((province, key)=>(
+                        <option key={key}  value={province}>{DRCProvinces[province]}</option>))}
+                      </select>
                     </div>
                   </div>
                   <div>
