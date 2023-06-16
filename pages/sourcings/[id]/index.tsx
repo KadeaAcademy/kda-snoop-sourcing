@@ -125,7 +125,7 @@ function NoCodeFormPublic() {
 
   return (
     <BaseLayoutManagement
-      title={"Forms - KDA Sourcing"}
+      title={"Forms - Kadea Sourcing"}
       breadcrumbs={[
         {
           name: `Admissions`,
@@ -145,12 +145,12 @@ function NoCodeFormPublic() {
             <div className="flex min-h-screen bg-ui-gray-light">
               <div className="flex flex-col justify-center flex-1 px-4 py-12 mx-auto sm:px-6 lg:flex-none lg:px-20 xl:px-24">
                 <div className="w-full max-w-sm p-8 mx-auto lg:w-96">
-                  <div>
+                  <div className="text-center">
                     <Image
-                      src="/img/kda_logo.png"
-                      alt="kinshasa digital academy logo"
+                      src="/img/kadea_logo.png"
+                      alt="Kadea  academy logo"
                       width={180}
-                      height={60}
+                      height={40}
                     />
                   </div>
                   <div className="mt-8">
@@ -165,7 +165,7 @@ function NoCodeFormPublic() {
               </div>
             </div>
           ) : (
-            <div className="flex-col">
+            <div className="text-sm flex-col">
               <h1 className="text-2xl mt-10 mb-10 ml-12 mx-auto font-bold  max-sm:ml-6 max-md:ml-6 max-sm:mt-8 max-md:mb-8">
                 {noCodeForm.form.name}
               </h1>
@@ -186,9 +186,14 @@ function NoCodeFormPublic() {
                   {noCodeForm.form.place}
                 </p>
               )}
-              <p className="text-lg mb-3 ml-12  mr-11">
-                {noCodeForm.form.description}
-              </p>
+
+              <div
+                className="text-sm mb-3 ml-12  mr-11"
+                dangerouslySetInnerHTML={{
+                  __html: noCodeForm.form.description,
+                }}
+              />
+
               {pages.map((page, index) => {
                 let numberOfQuestions = 0;
                 let numberOfAnsweredQuestions = 0;
@@ -227,7 +232,7 @@ function NoCodeFormPublic() {
                       <div
                         className={`pl-12 ${
                           isTimedPage(page) ? "pl-16" : "pl-8"
-                        }  flex items-center max-sm:pl-6 max-sm:pr-6 max-sm:pb-5 max-md:pb-5 max-sm:font-semibold max-md:font-semibold max-md:pl-6 max-md:pr-6  max-md:w-5/5 md:w-2/5`}
+                        } flex items-center max-sm:pl-6 max-sm:pr-6 max-sm:pb-5 max-md:pb-5 max-sm:font-semibold max-md:font-semibold max-md:pl-6 max-md:pr-6  max-md:w-5/5 md:w-2/5`}
                       >
                         {page.length ? "" : page.blocks[0].data.text}
                       </div>
@@ -246,7 +251,7 @@ function NoCodeFormPublic() {
                             </>
                           ) : (
                             <>
-                              <span className="flex mr-12 items-center text-gray-800">
+                              <span className="flex mr-2 items-center text-gray-800">
                                 {numberOfAnsweredQuestions} /{" "}
                                 {numberOfQuestions} {"questions "}
                               </span>{" "}
@@ -257,7 +262,7 @@ function NoCodeFormPublic() {
                           <button
                             onClick={() => handleClickAction(page)}
                             disabled={isTimedPage(page)}
-                            className="w-107  rounded-full bg-green-800 p-2.5 text-white text-sm font-bold"
+                            className="w-107 rounded-full bg-green-800 p-2.5 text-white text-sm font-bold"
                           >
                             {isTimedPage(page) ? "Terminé" : "Modifier"}
                           </button>
