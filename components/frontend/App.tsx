@@ -287,8 +287,8 @@ const App: FC<IProps> = ({
                     isDisabled={disabled}
                     classNames={{
                       button: !disabled
-                        ? "inline-flex items-center px-4 py-3 text-sm font-medium text-white bg-gray-700 border border-transparent rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-                        : "inline-flex items-center px-4 py-3 text-sm font-medium text-white bg-gray-300 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500",
+                        ? "inline-flex items-center min-w-[20%] justify-center px-4 py-3 text-sm font-medium text-white bg-gray-700 border border-transparent rounded-md shadow-sm hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                        : "inline-flex items-center min-w-[20%] justify-center px-4 py-3 text-sm font-medium text-white bg-gray-300 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500",
                     }}
                   />
                 </>
