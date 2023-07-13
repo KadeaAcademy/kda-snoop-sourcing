@@ -135,7 +135,7 @@ function PipelinesPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
-      }
+      },
     );
     const submissionSession = await submissionSessionRes.json();
 
@@ -168,7 +168,7 @@ function PipelinesPage() {
         label: "Ajouter un Pipeline ",
       },
     ],
-    []
+    [],
   );
 
   if (isLoadingForm || isLoadingPipelines) {
@@ -241,7 +241,7 @@ function PipelinesPage() {
                                     pipeline.enabled
                                       ? "bg-green-600"
                                       : "bg-gray-200",
-                                    "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                                    "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2",
                                   )}
                                 >
                                   <span className="sr-only">Use setting</span>
@@ -250,7 +250,7 @@ function PipelinesPage() {
                                       pipeline.enabled
                                         ? "translate-x-5"
                                         : "translate-x-0",
-                                      "pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                                      "pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
                                     )}
                                   >
                                     <span
@@ -258,7 +258,7 @@ function PipelinesPage() {
                                         pipeline.enabled
                                           ? "opacity-0 ease-out duration-100"
                                           : "opacity-100 ease-in duration-200",
-                                        "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                                        "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity",
                                       )}
                                       aria-hidden="true"
                                     >
@@ -281,7 +281,7 @@ function PipelinesPage() {
                                         pipeline.enabled
                                           ? "opacity-100 ease-in duration-200"
                                           : "opacity-0 ease-out duration-100",
-                                        "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                                        "absolute inset-0 flex h-full w-full items-center justify-center transition-opacity",
                                       )}
                                       aria-hidden="true"
                                     >
@@ -310,7 +310,7 @@ function PipelinesPage() {
                             onClick={() => {
                               if (
                                 confirm(
-                                  "Are you sure you want to delete this pipeline?"
+                                  "Are you sure you want to delete this pipeline?",
                                 )
                               ) {
                                 deletePipelineAction(pipeline.id);
@@ -332,7 +332,7 @@ function PipelinesPage() {
                             onClick={() => {
                               if (
                                 confirm(
-                                  "Vous êtes sur le point d'envoyer les soumissions de tous les candidats du formulaire vers Airtable, Etes-vous sûr ?"
+                                  "Vous êtes sur le point d'envoyer les soumissions de tous les candidats du formulaire vers Airtable, Etes-vous sûr ?",
                                 )
                               ) {
                                 migrateAction();
