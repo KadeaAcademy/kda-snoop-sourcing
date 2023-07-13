@@ -146,7 +146,8 @@ export default function FormList() {
               <select
                 className="flex justify-center text-sm font-medium text-black py-1 px-1 md:py-2 md:px-10 rounded-md shadow-sm border border-gray-300 bg-white rounded-md hover:border hover:border-black mr-1"
                 value={selectedLocation}
-                onChange={handleChangeLocation}>
+                onChange={handleChangeLocation}
+              >
                 <option value="">LIEU</option>
                 {SourcingLocations.map((city, cityIndex) => (
                   <option key={cityIndex} value={city}>
@@ -158,7 +159,8 @@ export default function FormList() {
               <select
                 className="flex justify-center text-sm font-medium text-black py-1 px-6 md:py-2 md:px-10 rounded-md shadow-sm border border-gray-300 bg-white rounded-md hover:border hover:border-black mx-1"
                 value={selectedFormation}
-                onChange={handleChangeFormation}>
+                onChange={handleChangeFormation}
+              >
                 <option value="">FORMATION</option>
                 {SourcingFormations.map((formation, formationIndex) => (
                   <option key={formationIndex} value={formation}>
@@ -168,7 +170,8 @@ export default function FormList() {
               </select>
               <button
                 className="flex justify-center text-sm font-medium py-2 px-2 md:py-2 md:px-10 rounded-md shadow-sm focus:outline-none focus:ring-2 bg-snoopfade text-white focus:ring-offset-2 focus:ring-red-500 mx-1"
-                onClick={() => filterSourcings("RESET")}>
+                onClick={() => filterSourcings("RESET")}
+              >
                 RESET
               </button>
             </div>
@@ -176,6 +179,15 @@ export default function FormList() {
             <></>
           )}
         </div>
+        {!forms && (
+          <EmptyPageFiller
+            alertText="Aucune session d'inscription trouvée."
+            hintText=""
+            borderStyles="border-4 border-dotted border-red"
+          >
+            <FolderOpenIcon className="w-24 h-24 mx-auto text-ui-gray-medium stroke-thin" />
+          </EmptyPageFiller>
+        )}
         {filteredData &&
           (filteredData.length === 0 ? (
             <div className="mt-5 text-center">
@@ -183,7 +195,8 @@ export default function FormList() {
                 <EmptyPageFiller
                   alertText="Aucune session d'inscription trouvée."
                   hintText=""
-                  borderStyles="border-4 border-dotted border-red">
+                  borderStyles="border-4 border-dotted border-red"
+                >
                   <FolderOpenIcon className="w-24 h-24 mx-auto text-ui-gray-medium stroke-thin" />
                 </EmptyPageFiller>
               ) : (
@@ -193,7 +206,8 @@ export default function FormList() {
                   hintText="Commencez par créer un sourcing"
                   buttonText="Nouveau Sourcing"
                   borderStyles="border-4 border-dotted border-red"
-                  hasButton={true}>
+                  hasButton={true}
+                >
                   <DocumentPlusIcon className="w-24 h-24 mx-auto text-ui-gray-medium stroke-thin" />
                 </EmptyPageFiller>
               )}
@@ -284,7 +298,8 @@ export default function FormList() {
                           session.user.role === UserRole.PUBLIC
                             ? `/sourcings/${form.id}`
                             : `/forms/${form.id}/form`
-                        }>
+                        }
+                      >
                         <a className="absolute w-full h-full" />
                       </Link>
                       <div className="divide-y divide-ui-gray-light ">
@@ -298,7 +313,8 @@ export default function FormList() {
                             </p>
                             <Menu
                               as="div"
-                              className="relative z-10 inline-block text-left">
+                              className="relative z-10 inline-block text-left"
+                            >
                               {({ open }) => (
                                 <>
                                   <div>
@@ -321,10 +337,12 @@ export default function FormList() {
                                     enterTo="transform opacity-100 scale-100"
                                     leave="transition ease-in duration-75"
                                     leaveFrom="transform opacity-100 scale-100"
-                                    leaveTo="transform opacity-0 scale-95">
+                                    leaveTo="transform opacity-0 scale-95"
+                                  >
                                     <Menu.Items
                                       static
-                                      className="absolute left-0 w-56 px-1 mt-2 origin-top-right bg-white rounded-sm shadow-lg">
+                                      className="absolute left-0 w-56 px-1 mt-2 origin-top-right bg-white rounded-sm shadow-lg"
+                                    >
                                       <div className="py-1">
                                         <Menu.Item>
                                           {({ active }) => (
@@ -338,7 +356,8 @@ export default function FormList() {
                                                     ? "bg-ui-gray-light rounded-sm text-ui-black"
                                                     : "text-ui-gray-dark",
                                                   "flex px-4 py-2 text-sm w-full",
-                                                )}>
+                                                )}
+                                              >
                                                 <TrashIcon
                                                   className="w-5 h-5 mr-3 text-ui-gray-dark"
                                                   aria-hidden="true"
@@ -354,7 +373,8 @@ export default function FormList() {
                                                     ? "bg-ui-gray-light rounded-sm text-ui-black"
                                                     : "text-ui-gray-dark",
                                                   "flex px-4 py-2 text-sm w-full",
-                                                )}>
+                                                )}
+                                              >
                                                 <HiDocumentDuplicate
                                                   className="w-5 h-5 mr-3 text-ui-gray-dark"
                                                   aria-hidden="true"
