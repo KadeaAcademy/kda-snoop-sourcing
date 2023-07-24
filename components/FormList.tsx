@@ -278,8 +278,11 @@ export default function FormList() {
                               {format(new Date(form.dueDate), "yyyy-MM-dd") <
                               format(new Date(), "yyyy-MM-dd")
                                 ? "Fermé"
-                                : "Ferme"}{" "}
-                              {timeSince(form.dueDate)}
+                                : "Ferme"}{" le "}
+                              {format(new Date(form.dueDate), "dd MMMM yyyy", {
+                                locale: fr,
+                              })}
+                              
                             </span>
                           )}
                         </span>
