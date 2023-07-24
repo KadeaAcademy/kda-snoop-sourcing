@@ -38,9 +38,6 @@ const App: FC<IProps> = ({
   const [error, setError] = useState<boolean>(false);
   const router = useRouter();
 
-  useEffect(() => {
-    if (error) setError(true);
-  }, [error, setError]);
 
   const onSubmit = () => {
 
@@ -48,7 +45,7 @@ const App: FC<IProps> = ({
       router.push(`/sourcings/${formId}`);
     } else {
       toast.error(
-        "Une erreur s'est produite, surement un champ obligatoire non remplit ou une erreur de connexion. veuillez ressayer",
+        "Une erreur s'est produite, surement une erreur de connexion. veuillez ressayer",
       );
       setDisabled(false);
     }
@@ -277,8 +274,7 @@ const App: FC<IProps> = ({
                   error={fieldErrors[block.id]}
                 />
               ) : block.type === "submitButton" ? (
-                <>
-                  {/* {console.log(error)} */}
+              
 
                   <SnoopElement
                     name="submit"
@@ -291,7 +287,7 @@ const App: FC<IProps> = ({
                         : "inline-flex items-center min-w-[20%] justify-center px-4 py-3 text-sm font-medium text-white bg-gray-300 border border-transparent rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500",
                     }}
                   />
-                </>
+              
               ) : block.type === "websiteQuestion" ? (
                 <SnoopElement
                   type="website"
