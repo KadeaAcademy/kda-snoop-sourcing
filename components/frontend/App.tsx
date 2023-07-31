@@ -41,7 +41,7 @@ const App: FC<IProps> = ({
 
   const onSubmit = () => {
 
-    if (!Object.values(fieldErrors).filter((f) => f).length && !error) {
+    if (!Object.values(fieldErrors).filter((f) => f).length) {
       router.push(`/sourcings/${formId}`);
     } else {
       toast.error(
