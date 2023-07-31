@@ -269,7 +269,7 @@ export default function FormList() {
                             </span>
                           ) : dateDayDiff(form.dueDate) > 7 ? (
                             <span className="text-base font-normal text-black-title line-clamp-3">
-                              {format(new Date(form.dueDate), "dd MMMM yyyy", {
+                              {"Ferme le "+ format(new Date(form.dueDate), "dd MMMM yyyy", {
                                 locale: fr,
                               })}
                             </span>
@@ -278,10 +278,8 @@ export default function FormList() {
                               {format(new Date(form.dueDate), "yyyy-MM-dd") <
                               format(new Date(), "yyyy-MM-dd")
                                 ? "Fermé"
-                                : "Ferme"}{" le "}
-                              {format(new Date(form.dueDate), "dd MMMM yyyy", {
-                                locale: fr,
-                              })}
+                                : "Ferme"}{" "}
+                                  {timeSince(form.dueDate)}
                               
                             </span>
                           )}
