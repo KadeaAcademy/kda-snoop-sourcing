@@ -84,6 +84,7 @@ model Form {
   formType           FormType            @default(NOCODE)
   answeringOrder     FormOrder           @default(RANDOM)
   name               String              @default("")
+  title              String              @default("")
   description        String              @default("")
   dueDate            DateTime?
   place              Location            @default(Autre)
