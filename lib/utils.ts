@@ -450,3 +450,13 @@ export const syncCandidatesEvents = (updateCandidatesEvents, flag, NB_QUERIES, p
     }
   });
 };
+
+export const capitalizeString = (s: string | string[]) => {
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+export const changeToUpperCase = (s: string | string[]) => {
+  if (typeof s !== 'string') return ''
+  return s.toUpperCase();
+}

@@ -14,7 +14,8 @@ import { Fragment, useState, useEffect } from "react";
 import { useForms } from "../lib/forms";
 import { UserRole } from "@prisma/client";
 import { useSession, signIn } from "next-auth/react";
-import { classNames, timeSince } from "../lib/utils";
+import { useRouter } from "next/router";
+import { classNames, timeSince, capitalizeString, changeToUpperCase } from "../lib/utils";
 import NewFormModal from "./form/NewFormModal";
 import EmptyPageFiller from "./layout/EmptyPageFiller";
 import { format } from "date-fns";
@@ -25,13 +26,17 @@ import { fr } from "date-fns/locale";
 import { SourcingFormations, SourcingLocations } from "../lib/enums";
 
 export default function FormList() {
+  const router = useRouter();
   const { forms, mutateForms } = useForms();
+
+  const { training, city } = router.query;
+
   const [openNewFormModal, setOpenNewFormModal] = useState(false);
   const [queryValue, setQueryValue] = useState("");
   const [formData, setFormData] = useState({});
   const [filteredData, setFilteredData] = useState(forms);
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [selectedFormation, setSelectedFormation] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState(capitalizeString(city) || "");
+  const [selectedFormation, setSelectedFormation] = useState(changeToUpperCase(training) || "");
 
   const { data: session } = useSession({
     required: true,
@@ -76,10 +81,13 @@ export default function FormList() {
   };
 
   const handleChangeLocation = (event) => {
+    router.push(`/sourcings?training=${training}&city=${event.target.value}`)
     setSelectedLocation(event.target.value);
   };
   const handleChangeFormation = (event) => {
+    
     setSelectedFormation(event.target.value);
+    router.push(`/sourcings?training=${event.target.value}&city=${city}`)
   };
 
   const newForm = async () => {
