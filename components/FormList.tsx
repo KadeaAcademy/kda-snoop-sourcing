@@ -130,6 +130,7 @@ export default function FormList() {
       setFilteredData(forms);
       setSelectedFormation("");
       setSelectedLocation("");
+      router.push(`/sourcings?training=&city=`);
       return;
     }
   };
