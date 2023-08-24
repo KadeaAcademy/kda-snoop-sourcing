@@ -81,13 +81,13 @@ export default function FormList() {
   };
 
   const handleChangeLocation = (event) => {
-    router.push(`/sourcings?training=${training}&city=${event.target.value}`)
+    router.push(`/sourcings?training=${selectedFormation}&city=${event.target.value}`)
     setSelectedLocation(event.target.value);
   };
   const handleChangeFormation = (event) => {
     
     setSelectedFormation(event.target.value);
-    router.push(`/sourcings?training=${event.target.value}&city=${city}`)
+    router.push(`/sourcings?training=${event.target.value}&city=${selectedLocation}`)
   };
 
   const newForm = async () => {
