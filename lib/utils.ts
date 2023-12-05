@@ -1,8 +1,11 @@
+import { UserRole } from "@prisma/client";
+
 import intlFormat from "date-fns/intlFormat";
 import { formatDistance } from "date-fns";
 import { fr } from "date-fns/locale";
+
 import crypto from "crypto";
-import { UserRole } from "@prisma/client";
+
 import AWS from "aws-sdk";
 
 export const fetcher = async (url) => {
@@ -450,3 +453,35 @@ export const syncCandidatesEvents = (updateCandidatesEvents, flag, NB_QUERIES, p
     }
   });
 };
+
+export const updateCandidateSourcingOnAirtable = async (email, trainingSession) => {
+  const airtableWebHook = process.env.AIRTABLE_WEBHOOK_ENDPOINT;
+  const airtableToken = process.env.AIRTABLE_TOKEN;
+  try {
+
+    await fetch(airtableWebHook, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${airtableToken}`,
+      },
+      body: JSON.stringify({
+        email,
+        trainingSession
+      }),
+    }).then((res) => {
+      console.log(res)
+    });
+
+    // if (!res.ok) {
+    //   throw new Error('Network response was not ok');
+    // }
+
+    // const data = await response.json();
+
+    // res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    // res.status(500).json({ error: 'Error fetching data' });
+  }
+} 

@@ -1,5 +1,6 @@
-import { hashPassword } from "./auth";
 import useSWR from "swr";
+
+import { hashPassword } from "./auth";
 import { fetcher } from "./utils";
 
 export enum UserRoles {
@@ -26,6 +27,35 @@ export const createUser = async (
           address,
           phone,
           whatsapp,
+          email,
+          password: hashedPassword,
+          profileIsValid: true,
+        },
+      }),
+    });
+    if (res.status !== 200) {
+      const json = await res.json();
+
+      throw Error(json.error);
+    }
+    return await res.json();
+  } catch (error) {
+    throw Error(`${error.message}`);
+  }
+};
+
+export const createUserByUrl = async (
+  {    email, password="kadea123" },
+  callbackUrl = ""
+) => {
+  const hashedPassword = await hashPassword(password);
+  try {
+    const res = await fetch(`/api/public/users?email=${email}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        callbackUrl,
+        user: {
           email,
           password: hashedPassword,
           profileIsValid: true,

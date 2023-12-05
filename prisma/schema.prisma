@@ -154,17 +154,17 @@ model Address {
 
 model User {
   id              Int           @id @default(autoincrement())
-  firstname       String
-  lastname        String
-  gender          String
+  firstname       String?
+  lastname        String?
+  gender          String?
   dob             DateTime?     @db.Date @map(name: "date_of_birth")
   address         Address?
-  photo           String        @default("")
-  phone           String        @unique
+  photo           String?        @default("")
+  phone           String?        @unique
   whatsapp        String?
   email           String        @unique
   emailVerified   DateTime?     @map(name: "email_verified")
-  profileIsValid  Boolean       @default(false)
+  profileIsValid  Boolean?       @default(false)
   password        String
   role            UserRole      @default(PUBLIC)
   createdAt       DateTime      @default(now()) @map(name: "created_at")
