@@ -45,7 +45,7 @@ export const createUser = async (
 };
 
 export const createUserByUrl = async (
-  {    email, password="kadea123" },
+  { email, password = "kadea123" },
   callbackUrl = ""
 ) => {
   const hashedPassword = await hashPassword(password);
@@ -112,14 +112,15 @@ export const forgotPassword = async (email: string) => {
   }
 };
 
-export const resetPassword = async (token, password) => {
+export const resetPassword = async (id, password) => {
   const hashedPassword = await hashPassword(password);
+
   try {
     const res = await fetch(`/api/public/users/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token,
+        id: parseInt(id),
         hashedPassword,
       }),
     });
@@ -173,7 +174,7 @@ export const updateUser = async (user, address) => {
     const data = await fetch(`/api/users/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({user, address}),
+      body: JSON.stringify({ user, address }),
     });
     return data;
   } catch (error) {

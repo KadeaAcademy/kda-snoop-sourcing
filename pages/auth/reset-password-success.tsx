@@ -1,8 +1,14 @@
 import Image from "next/image";
-import Link from "next/link";
 import BaseLayoutUnauthorized from "../../components/layout/BaseLayoutUnauthorized";
+import { useRouter } from "next/router";
 
 export default function ResetPasswordSuccess() {
+  const router = useRouter();
+  const formId = router.query.id?.toString();
+
+  const redirectToSignin = () => {
+    formId ? router.push(`/auth/signin?id=${formId}`) : router.push("/auth/signin")
+  }
   return (
     <BaseLayoutUnauthorized title="Réinitialisation du mot de passe">
       <div className="flex min-h-screen bg-ui-gray-light">
@@ -25,14 +31,16 @@ export default function ResetPasswordSuccess() {
                 Tu peux maintenant te connecter avec ton nouveau mot de passe{" "}
               </p>
               <div className="mt-3 text-center">
-                <Link href="/auth/signin">
-                  <a
-                    href=""
+                <button
+                  onClick={redirectToSignin}
+                >
+                  <span
+                    // href=""
                     className="text-xs text-red hover:text-red-600 block"
                   >
                     Connecte-toi
-                  </a>
-                </Link>
+                  </span>
+                </button>
               </div>
             </div>
           </div>

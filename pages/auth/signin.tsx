@@ -11,12 +11,12 @@ const { passwordResetDisabled } = publicRuntimeConfig;
 
 export default function SignInPage() {
   const router = useRouter();
-  const { error } = router.query;
+  const { error, id } = router.query;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await signIn("credentials", {
-      callbackUrl: router.query.callbackUrl?.toString() || "/forms", //UserRole.PUBLIC?'/forms': '/f/sourcings',
+      callbackUrl: `/sourcings/${id}` || router.query.callbackUrl?.toString() || "/forms", //UserRole.PUBLIC?'/forms': '/f/sourcings',
       email: e.target.elements.email.value,
       password: e.target.elements.password.value,
     });
