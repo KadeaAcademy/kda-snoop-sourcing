@@ -159,6 +159,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       signIn: "/auth/signin",
       signOut: "/auth/logout",
       error: "/auth/signin", // Error code passed in query string as ?error=
+      id: "/auth/signin"
     },
   });
 }

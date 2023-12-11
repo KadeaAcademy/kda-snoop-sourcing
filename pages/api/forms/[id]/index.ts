@@ -17,9 +17,12 @@ export default async function handle(
   // GET /api/forms/:id
   // Get form with specific id
   if (req.method === "GET") {
-    const formData = await prisma.form.findUnique({
+    const formData = await prisma.form.findFirst({
       where: {
-        id: formId,
+        id: {
+          contains: `${formId}`,
+          mode: 'insensitive'
+        }
       },
     });
     if (formData === null) return res.status(404).json({ error: "not found" });
