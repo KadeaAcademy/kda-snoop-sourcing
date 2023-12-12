@@ -12,9 +12,12 @@ export default async function handle(
   // GET /api/forms/:id/nocodeform
   // Get noCodeForm for a form with specific id
   if (req.method === "GET") {
-    const form = await prisma.noCodeForm.findUnique({
+    const form = await prisma.noCodeForm.findFirst({
       where: {
-        formId: formId,
+        formId: {
+          contains: `${formId}`,
+          mode: 'insensitive',
+        },
       },
       select: {
         id: true,

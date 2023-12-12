@@ -1,5 +1,6 @@
-import { hashPassword } from "./auth";
 import useSWR from "swr";
+
+import { hashPassword } from "./auth";
 import { fetcher } from "./utils";
 
 export enum UserRoles {
@@ -26,6 +27,35 @@ export const createUser = async (
           address,
           phone,
           whatsapp,
+          email,
+          password: hashedPassword,
+          profileIsValid: true,
+        },
+      }),
+    });
+    if (res.status !== 200) {
+      const json = await res.json();
+
+      throw Error(json.error);
+    }
+    return await res.json();
+  } catch (error) {
+    throw Error(`${error.message}`);
+  }
+};
+
+export const createUserByUrl = async (
+  { email, password = "kadea123" },
+  callbackUrl = ""
+) => {
+  const hashedPassword = await hashPassword(password);
+  try {
+    const res = await fetch(`/api/public/users?email=${email}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        callbackUrl,
+        user: {
           email,
           password: hashedPassword,
           profileIsValid: true,
@@ -82,15 +112,17 @@ export const forgotPassword = async (email: string) => {
   }
 };
 
-export const resetPassword = async (token, password) => {
+export const resetPassword = async (id, password) => {
   const hashedPassword = await hashPassword(password);
+
   try {
     const res = await fetch(`/api/public/users/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token,
+        id: parseInt(id),
         hashedPassword,
+        firstLogin: false
       }),
     });
     if (res.status !== 200) {
@@ -143,10 +175,28 @@ export const updateUser = async (user, address) => {
     const data = await fetch(`/api/users/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({user, address}),
+      body: JSON.stringify({ user, address }),
     });
     return data;
   } catch (error) {
+    console.error(error);
+  }
+};
+
+
+export const checkUserFirstLogin = async (id) => {
+  try {
+    const res = await fetch(`/api/public/users/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (res.status !== 200) {
+      const json = await res.json();
+      throw Error(json.error);
+    }
+    return await res.json();
+  } catch (error) {
+    // throw Error(`${error.message}`);
     console.error(error);
   }
 };
