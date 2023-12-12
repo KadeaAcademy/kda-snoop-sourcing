@@ -27,7 +27,7 @@ export default async function handle(
 
     const hashedPassword = await hashPassword(password);
 
-    user = { ...user, ...{ email: email, password: hashedPassword } };
+    user = { ...user, ...{ email: email, password: hashedPassword, firstLogin: true } };
 
     // const { emailVerificationDisabled } = publicRuntimeConfig;
 
@@ -76,6 +76,7 @@ export default async function handle(
             ? "cette adresse e-mail"
             : "ce numéro de téléphone"
             } existe déjà`,
+          message: "Compte existant",
           errorCode: e.code,
           formId: form.id,
           id: foundUser.id,
@@ -85,6 +86,7 @@ export default async function handle(
         return res.status(500).json({
           error: e.message,
           errorCode: e.code,
+          message: "Une erreur s'est produite dans la création du compte"
         });
       }
     }
