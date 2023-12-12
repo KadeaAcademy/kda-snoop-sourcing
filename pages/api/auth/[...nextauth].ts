@@ -136,7 +136,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
               address: true
             },
           });
-          const {password, emailVerified, createdAt, updatedAt, ...sUser} = user;
+          const { password, emailVerified, createdAt, updatedAt, firstLogin, ...sUser} = user;
           session.user = sUser;
         }
         return session;

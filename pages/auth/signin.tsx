@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { XCircleIcon } from "@heroicons/react/24/solid";
 import { signIn } from "next-auth/react";
 import getConfig from "next/config";
@@ -5,13 +6,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import BaseLayoutUnauthorized from "../../components/layout/BaseLayoutUnauthorized";
+import { checkUserFirstLogin } from "../../lib/users";
 
 const { publicRuntimeConfig } = getConfig();
 const { passwordResetDisabled } = publicRuntimeConfig;
 
 export default function SignInPage() {
   const router = useRouter();
-  const { error, id } = router.query;
+  const { error, id, userId } = router.query;
+  let user = {
+    id: Number,
+    email: String,
+    firstLogin: Boolean,
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +28,23 @@ export default function SignInPage() {
       password: e.target.elements.password.value,
     });
   };
+
+
+  
+  useEffect(() => {
+    const  checkUserLoginState = async(userId) => {
+      user = await checkUserFirstLogin(userId);
+
+      if (user.firstLogin) {
+        router.push(`/auth/reset-password?userId=${userId}&id=${id}`)
+      } 
+    }
+    if (userId) {
+      checkUserLoginState(userId)
+    }
+
+  }, [router.query])
+
   return (
     <BaseLayoutUnauthorized title="Sign in">
       <div className="flex min-h-screen bg-ui-gray-light">

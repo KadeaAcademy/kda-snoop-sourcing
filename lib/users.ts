@@ -122,6 +122,7 @@ export const resetPassword = async (id, password) => {
       body: JSON.stringify({
         id: parseInt(id),
         hashedPassword,
+        firstLogin: false
       }),
     });
     if (res.status !== 200) {
@@ -178,6 +179,24 @@ export const updateUser = async (user, address) => {
     });
     return data;
   } catch (error) {
+    console.error(error);
+  }
+};
+
+
+export const checkUserFirstLogin = async (id) => {
+  try {
+    const res = await fetch(`/api/public/users/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (res.status !== 200) {
+      const json = await res.json();
+      throw Error(json.error);
+    }
+    return await res.json();
+  } catch (error) {
+    // throw Error(`${error.message}`);
     console.error(error);
   }
 };
