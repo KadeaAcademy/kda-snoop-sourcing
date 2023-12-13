@@ -21,15 +21,13 @@ export default async function handle(
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
     let { user, callbackUrl } = req.body;
-    let { email, trainingSession } = req.query;
+    let { trainingSession } = req.query;
 
     let password: string = "Kadea123";
 
     const hashedPassword = await hashPassword(password);
 
-    user = { ...user, ...{ email: email, password: hashedPassword, firstLogin: true } };
-
-    // const { emailVerificationDisabled } = publicRuntimeConfig;
+    user = { ...user, ...{ email: user.email, password: hashedPassword, firstLogin: true } };
 
     const form = await prisma.form.findFirst({
       where: {
@@ -64,7 +62,7 @@ export default async function handle(
 
         let foundUser = await prisma.user.findUnique({
           where: {
-            email: `${email}`
+            email: user.email
           }, select: {
             id: true,
             email: true
