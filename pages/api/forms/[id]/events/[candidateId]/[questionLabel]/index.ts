@@ -60,13 +60,7 @@ export default async function handle(
 
     const candidateResponse  = await prisma.user.findUnique({
         select: {
-          firstname: true,
-          lastname: true,
-          gender: true,
-          phone: true,
           email: true,
-          phone: true,
-          whatsapp: true,
         },
         where:  {
           id: s.data["candidateId"]
@@ -96,11 +90,6 @@ export default async function handle(
     const headerConfig = [
       { label: "createdAt", key: "createdAt" },
       { label: "Email", key: "email" },
-      { label: "Prénom", key: "firstname" },
-      { label: "Nom", key: "lastname" },
-      { label: "Genre", key: "gender" },
-      { label: "Phone", key: "phone" },
-      { label: "Whatsapp", key: "whatsapp" },
       { label: "Score", key: "" },
     ];
   const formPages = [];
