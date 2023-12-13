@@ -21,6 +21,7 @@ export default async function handle(
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
     let { user, callbackUrl } = req.body;
+    // TODO: mettre trainingSession dans le body
     let { trainingSession } = req.query;
 
     let password: string = "Kadea123";
@@ -32,6 +33,7 @@ export default async function handle(
     const form = await prisma.form.findFirst({
       where: {
         airtableTrainingSessionId: {
+          // TODO: match exactly the id here
           contains: `${trainingSession}`,
         },
       },
@@ -69,7 +71,7 @@ export default async function handle(
           }
         })
 
-        return res.status(409).json({
+        return res.status(A).json({
           error: `un utilisateur avec ${e.meta.target[0] === "email"
             ? "cette adresse e-mail"
             : "ce numéro de téléphone"

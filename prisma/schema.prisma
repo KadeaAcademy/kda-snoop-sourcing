@@ -171,6 +171,6 @@ model User {
   updatedAt       DateTime      @updatedAt @map(name: "updated_at")
   forms           Form[]
   firstLogin      Boolean       @default(false)
-
+  // TODO: link user to sourcings ie garder les cadidatures
   @@map(name: "users")
 }

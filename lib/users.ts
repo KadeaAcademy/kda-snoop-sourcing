@@ -86,13 +86,13 @@ export const resetPassword = async (id, password) => {
   const hashedPassword = await hashPassword(password);
 
   try {
+    
     const res = await fetch(`/api/public/users/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id: parseInt(id),
-        hashedPassword,
-        firstLogin: false
+        hashedPassword
       }),
     });
     if (res.status !== 200) {

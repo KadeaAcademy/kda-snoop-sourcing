@@ -13,7 +13,7 @@ const { passwordResetDisabled } = publicRuntimeConfig;
 
 export default function SignInPage() {
   const router = useRouter();
-  const { error, id, userId } = router.query;
+  const { error, userId } = router.query;
   let user = {
     id: Number,
     email: String,
@@ -23,13 +23,12 @@ export default function SignInPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     await signIn("credentials", {
-      callbackUrl: id && `/sourcings/${id}` || router.query.callbackUrl?.toString() || "/forms", //UserRole.PUBLIC?'/forms': '/f/sourcings',
+      // TODO: use callback url passed from previous step
+      callbackUrl: router.query.callbackUrl?.toString() || "/forms",
       email: e.target.elements.email.value,
       password: e.target.elements.password.value,
     });
   };
-
-
   
   useEffect(() => {
     const  checkUserLoginState = async(userId) => {

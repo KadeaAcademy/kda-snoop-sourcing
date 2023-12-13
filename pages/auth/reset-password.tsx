@@ -19,7 +19,8 @@ export default function ResetPasswordPage() {
     try {
       await resetPassword(userId, e.target.elements.password.value);
       if (formId) {
-        router.push(`/auth/reset-password-success?id=${formId}`);
+        // TODO: login user here after password reset
+        router.push(`/auth/reset-password-success?callbackUrl=%2Fsourcing%2F${formId}`);
       } else {
         router.push(`/auth/reset-password-success`);
       }

@@ -25,12 +25,13 @@ export default async function handle(
         });
       }
 
+      const emailVerified = user.emailVerified || Date.now();
       const updated = await prisma.user
         .update({
           where: { id: user.id },
-          data: { password: hashedPassword },
+          data: { password: hashedPassword, emailVerified },
         })
-      // await sendPasswordResetNotifyEmail(user)
+      // await sendPasswordResetNotifyEmail(user);
       res.status(200).json({ updated });
 
 

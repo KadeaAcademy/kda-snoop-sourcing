@@ -16,6 +16,8 @@ export const useNoCodeForm = (formId) => {
   };
 };
 
+// TODO: check if client user is allowed to access the form
+// only users who filled the fillout are. Users linked to the sourcing 
 export const useNoCodeFormPublic = (formId) => {
   const { data, error, mutate } = useSWR(
     `/api/public/forms/${formId}/nocodeform`,
