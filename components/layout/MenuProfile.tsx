@@ -69,24 +69,9 @@ export default function MenuProfile({}) {
                           className="w-5 h-5 mr-3 text-ui-gray-dark"
                           aria-hidden="true"
                         />
-                        {user.firstname} {user.lastname}
+                        {user.email}
                       </label>
                       <hr />
-                      <button
-                        onClick={onClickSettings}
-                        className={classNames(
-                          active
-                            ? "bg-ui-gray-light rounded-sm text-ui-black"
-                            : "text-ui-gray-dark",
-                          "flex px-4 py-2 text-sm w-full"
-                        )}
-                      >
-                        <CogIcon
-                          className="w-5 h-5 mr-3 text-ui-gray-dark"
-                          aria-hidden="true"
-                        />
-                        Mettre à Jour
-                      </button>
                       <button
                         onClick={() => signOut({ callbackUrl: "/" })}
                         className={classNames(
