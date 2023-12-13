@@ -6,6 +6,7 @@ import { sendVerificationEmail } from "../../../../lib/email";
 import getConfig from "next/config";
 import { capturePosthogEvent } from "../../../../lib/posthog";
 import { hashPassword } from "../../../../lib/auth";
+import { createToken } from "../../../../lib/jwt";
 
 
 
@@ -20,21 +21,19 @@ export default async function handle(
   // Required fields in body: email, password (hashed)
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
-    let { user, callbackUrl } = req.body;
-    // TODO: mettre trainingSession dans le body
-    let { trainingSession } = req.query;
+    let { user, callbackUrl, trainingSession } = req.body;  
 
     let password: string = "Kadea123";
 
     const hashedPassword = await hashPassword(password);
 
-    user = { ...user, ...{ email: user.email, password: hashedPassword, firstLogin: true } };
+    user = { ...user, ...{ email: user.email, password: hashedPassword } };
 
     const form = await prisma.form.findFirst({
       where: {
         airtableTrainingSessionId: {
           // TODO: match exactly the id here
-          contains: `${trainingSession}`,
+          equals: `${trainingSession}`,
         },
       },
       select: {
@@ -51,11 +50,15 @@ export default async function handle(
       });
       capturePosthogEvent(user.email, "user created");
 
-      res.json({
+      const token = createToken(userData.id, userData.email);
+
+      res.status(200).json({
         message: "Compte créé avec succès",
         formId: form.id,
         id: userData.id,
         email: user.email,
+        code: res.statusCode,
+        token: encodeURIComponent(token)
       });
 
 
@@ -71,13 +74,14 @@ export default async function handle(
           }
         })
 
-        return res.status(A).json({
+        return res.status(409).json({
           error: `un utilisateur avec ${e.meta.target[0] === "email"
             ? "cette adresse e-mail"
             : "ce numéro de téléphone"
             } existe déjà`,
           message: "Compte existant",
           errorCode: e.code,
+          code: res.statusCode,
           formId: form.id,
           id: foundUser.id,
           email: foundUser.email,
@@ -86,6 +90,7 @@ export default async function handle(
         return res.status(500).json({
           error: e.message,
           errorCode: e.code,
+          code: res.statusCode,
           message: "Une erreur s'est produite dans la création du compte"
         });
       }
