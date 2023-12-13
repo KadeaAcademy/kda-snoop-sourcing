@@ -32,7 +32,6 @@ export default async function handle(
     const form = await prisma.form.findFirst({
       where: {
         airtableTrainingSessionId: {
-          // TODO: match exactly the id here
           equals: `${trainingSession}`,
         },
       },

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
+import { verifyToken } from "../../../../lib/jwt";
 
 export default async function handle(
   req: NextApiRequest,
@@ -9,14 +10,19 @@ export default async function handle(
   // Resets a users password
   // Required fields in body: token, hashedPassword
   if (req.method === "POST") {
-    const { id, hashedPassword } = req.body;
+    const { token, hashedPassword } = req.body;
 
     try {
-      // const { id } = await verifyToken(token)
+      const { id } = await verifyToken(token)
       const user = await prisma.user.findUnique({
         where: {
           id: id,
         },
+        select: {
+          id: true,
+          emailVerified: true,
+          email: true
+        }
       });
 
       if (!user) {
@@ -25,14 +31,14 @@ export default async function handle(
         });
       }
 
-      const emailVerified = user.emailVerified || Date.now();
+      const emailVerified = user.emailVerified || new Date().toISOString();
       const updated = await prisma.user
         .update({
           where: { id: user.id },
-          data: { password: hashedPassword, emailVerified },
+          data: { password: hashedPassword, emailVerified  },
         })
       // await sendPasswordResetNotifyEmail(user);
-      res.status(200).json({ updated });
+      res.status(200).json({ updated, email: user.email });
 
 
     } catch (e) {

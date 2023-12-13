@@ -5,25 +5,35 @@ import { useState } from "react";
 import BaseLayoutUnauthorized from "../../components/layout/BaseLayoutUnauthorized";
 import { resetPassword } from "../../lib/users";
 import { signIn } from "next-auth/react";
+import { verifyToken } from "../../lib/jwt";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
   const token = router.query.token?.toString();
-  const userId = router.query?.userId;
-  const formId = router.query.id?.toString();
+  // const userId = router.query?.userId;
+  // const formId = router.query.id?.toString();
   const [error, setError] = useState<string>("");
 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await resetPassword(userId, e.target.elements.password.value);
-      if (formId) {
-        // TODO: login user here after password reset
-        router.push(`/auth/reset-password-success?callbackUrl=%2Fsourcing%2F${formId}`);
-      } else {
-        router.push(`/auth/reset-password-success`);
-      }
+      const resetedPassword = await resetPassword(token, e.target.elements.password.value);
+
+      console.log(resetedPassword.email)
+
+      await signIn("credentials", {
+        // TODO: use callback url passed from previous step
+        callbackUrl: router.query.callbackUrl?.toString() || "/forms",
+        email: resetedPassword.email,
+        password: e.target.elements.password.value,
+      });
+      // if (formId) {
+      //   // TODO: login user here after password reset
+      //   router.push(`/auth/reset-password-success?callbackUrl=%2Fsourcing%2F${formId}`);
+      // } else {
+      //   router.push(`/auth/reset-password-success`);
+      // }
     } catch (e) {
       console.log(e);
       setError(e.message);

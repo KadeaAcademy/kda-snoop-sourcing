@@ -82,7 +82,7 @@ export const forgotPassword = async (email: string) => {
   }
 };
 
-export const resetPassword = async (id, password) => {
+export const resetPassword = async (token, password) => {
   const hashedPassword = await hashPassword(password);
 
   try {
@@ -91,7 +91,7 @@ export const resetPassword = async (id, password) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        id: parseInt(id),
+        token: token,
         hashedPassword
       }),
     });
