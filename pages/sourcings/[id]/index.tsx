@@ -58,7 +58,7 @@ function NoCodeFormPublic() {
       await fetch(`/api/forms/${formId}/open`, {
         method: "POST",
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -73,11 +73,12 @@ function NoCodeFormPublic() {
     return <Loading />;
   }
 
-  const pages = usePages({ blocks: noCodeForm.blocks, formId: formId });
+
+  const pages = !isErrorNoCodeForm && usePages({ blocks: noCodeForm.blocks, formId: formId });
 
   if (isErrorNoCodeForm || !noCodeForm?.published) {
-    return (
-      <MessagePage text="Formulaire introuvable. Es-tu sûr d'avoir le bon lien ?" />
+
+    return (isErrorNoCodeForm === 403 ? <MessagePage text="Vous n'etes pas inscrit à cette formation" /> : <MessagePage text="Formulaire introuvable. Es-tu sûr d'avoir le bon lien ?" />
     );
   }
 
@@ -134,7 +135,7 @@ function NoCodeFormPublic() {
       </>
     );
   };
-  
+
   return (
     <BaseLayoutManagement
       title={"Forms - Kadea Sourcing"}
@@ -221,8 +222,8 @@ function NoCodeFormPublic() {
                   numberOfAnsweredQuestions = !pageSubmission?.data?.submission
                     ? 0
                     : Object.values(pageSubmission?.data?.submission).filter(
-                        (v) => v
-                      ).length;
+                      (v) => v
+                    ).length;
                 }
                 if (pages.length - 1 !== index)
                   return (
@@ -232,8 +233,8 @@ function NoCodeFormPublic() {
                     >
                       <div className="pl-12 flex items-center max-md:pl-6 max-md:pb-2">
                         {pageIsCompleted(page.id) ||
-                        (!isTimedPage(page) &&
-                          numberOfQuestions === numberOfAnsweredQuestions) ? (
+                          (!isTimedPage(page) &&
+                            numberOfQuestions === numberOfAnsweredQuestions) ? (
                           <CheckCircleIcon className="text-green-800 w-7 mr-2" />
                         ) : numberOfAnsweredQuestions > 0 ? (
                           <EllipsisHorizontalCircleIcon className="text-orange-600 w-7 mr-2" />
@@ -242,9 +243,8 @@ function NoCodeFormPublic() {
                         )}
                       </div>
                       <div
-                        className={`pl-12 ${
-                          isTimedPage(page) ? "pl-16" : "pl-8"
-                        } flex items-center max-sm:pl-6 max-sm:pr-6 max-sm:pb-5 max-md:pb-5 max-sm:font-semibold max-md:font-semibold max-md:pl-6 max-md:pr-6  max-md:w-5/5 md:w-2/5`}
+                        className={`pl-12 ${isTimedPage(page) ? "pl-16" : "pl-8"
+                          } flex items-center max-sm:pl-6 max-sm:pr-6 max-sm:pb-5 max-md:pb-5 max-sm:font-semibold max-md:font-semibold max-md:pl-6 max-md:pr-6  max-md:w-5/5 md:w-2/5`}
                       >
                         {page.length ? "" : page.blocks[0].data.text}
                       </div>

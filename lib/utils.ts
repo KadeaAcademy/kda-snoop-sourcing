@@ -18,7 +18,7 @@ export const fetcher = async (url) => {
     // Attach extra info to the error object.
     error.info = await res.json();
     error.status = res.status;
-    throw error;
+    throw error.status;
   }
 
   return res.json();

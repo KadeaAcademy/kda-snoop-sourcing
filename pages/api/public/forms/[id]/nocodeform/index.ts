@@ -21,7 +21,7 @@ export default async function handle(
       }
     })
 
-    if (!userCandidature) return res.status(404).json("Vous n'avez pas droit à cette formation");
+    if (!userCandidature) return res.status(403).json("Vous n'avez pas droit à cette formation");
 
     const form = await prisma.noCodeForm.findFirst({
       where: {
