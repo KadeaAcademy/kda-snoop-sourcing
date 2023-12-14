@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { prisma } from "../../../../lib/prisma";
-import { UserRole, Form } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { sendVerificationEmail } from "../../../../lib/email";
 import getConfig from "next/config";
 import { capturePosthogEvent } from "../../../../lib/posthog";
@@ -26,6 +26,7 @@ export default async function handle(
     let password: string = "Kadea123";
 
     const hashedPassword = await hashPassword(password);
+    
 
     user = { ...user, ...{ email: user.email, password: hashedPassword } };
 
@@ -47,6 +48,16 @@ export default async function handle(
           ...user,
         },
       });
+      let candidature;
+      if (userData && form) {
+         candidature = await prisma.candidature.create({
+          data: {
+             user: { connect: { id: userData?.id } },
+             form: { connect: { id: form?.id } },
+            submitted: false,
+          },
+        });
+      }
       capturePosthogEvent(user.email, "user created");
 
       const token = createToken(userData.id, userData.email);
@@ -57,7 +68,7 @@ export default async function handle(
         id: userData.id,
         email: user.email,
         code: res.statusCode,
-        token: encodeURIComponent(token)
+        token: encodeURIComponent(token),
       });
 
 
@@ -72,7 +83,16 @@ export default async function handle(
             email: true
           }
         })
-
+        let candidature;
+        if (foundUser && form) {
+          candidature = await prisma.candidature.create({
+            data: {
+              user: { connect: { id: foundUser?.id } },
+              form: { connect: { id: form?.id } },
+              submitted: false,
+            },
+          });
+        }
         return res.status(409).json({
           error: `un utilisateur avec ${e.meta.target[0] === "email"
             ? "cette adresse e-mail"

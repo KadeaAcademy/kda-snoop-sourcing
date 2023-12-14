@@ -178,10 +178,10 @@ model User {
 
 model Candidature {
   id          Int    @id @default(autoincrement())
-  user       User    @relation(fields: [userId], references: [id])
+  user        User    @relation(fields: [userId], references: [id])
   userId      Int
-  form       Form    @relation(fields: [formId], references: [id])
-  formId     String
+  form        Form    @relation(fields: [formId], references: [id])
+  formId      String
   submitted   Boolean? @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
