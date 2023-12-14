@@ -17,25 +17,30 @@ export default async function handle(
   // GET /api/forms/:id/nocodeform
   // Get noCodeForm for a form with specific id
   if (req.method === "GET") {
-    const data = await prisma.noCodeForm.findFirst({
-      where: {
-        formId: {
-          contains: `${formId}`,
-          mode: 'insensitive',
-      },
-      },
-      include: {
-        form: {
-          select: { 
-            name: true,
-            dueDate: true,
-            description: true,
-            place: true,
-           },
+
+ 
+      const data = await prisma.noCodeForm.findFirst({
+        where: {
+          formId: {
+            equals: `${formId}`,
+            mode: 'insensitive',
+          },
         },
-      },
-    });
-    return res.json(data);
+        include: {
+          form: {
+            select: {
+              name: true,
+              dueDate: true,
+              description: true,
+              place: true,
+            },
+          },
+        },
+      });
+      return res.json(data);
+
+    
+
   }
   // POST /api/forms/:id/nocodeform
   // Updates an existing nocodeform
