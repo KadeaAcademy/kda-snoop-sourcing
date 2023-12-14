@@ -13,36 +13,17 @@ const { passwordResetDisabled } = publicRuntimeConfig;
 
 export default function SignInPage() {
   const router = useRouter();
-  const { error, userId } = router.query;
-  let user = {
-    id: Number,
-    email: String,
-    firstLogin: Boolean,
-  };
+  const { error } = router.query;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await signIn("credentials", {
-      // TODO: use callback url passed from previous step
       callbackUrl: router.query.callbackUrl?.toString() || "/forms",
       email: e.target.elements.email.value,
       password: e.target.elements.password.value,
     });
   };
   
-  useEffect(() => {
-    const  checkUserLoginState = async(userId) => {
-      user = await checkUserFirstLogin(userId);
-
-      if (user.firstLogin) {
-        router.push(`/auth/reset-password?userId=${userId}&id=${id}`)
-      } 
-    }
-    if (userId) {
-      checkUserLoginState(userId)
-    }
-
-  }, [router.query])
 
   return (
     <BaseLayoutUnauthorized title="Sign in">
