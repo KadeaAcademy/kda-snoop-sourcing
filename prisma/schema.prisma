@@ -84,13 +84,14 @@ model Form {
   formType                               FormType            @default(NOCODE)
   answeringOrder                         FormOrder           @default(RANDOM)
   name                                   String              @default("")
-  airtableTrainingSessionId              String              @default("")
+  airtableTrainingSessionId              String              @unique
   description                            String              @default("")
   dueDate                                DateTime?
   place                                  Location            @default(Autre)
   formation                              Formation           @default(AUTRE)
   schema                                 Json                @default("{}")
   submissionSessions                     SubmissionSession[]
+  sourcing                               Candidature[]
   pipelines                              Pipeline[]
   noCodeForm                             NoCodeForm?
 }
@@ -154,22 +155,37 @@ model Address {
 
 model User {
   id              Int           @id @default(autoincrement())
-  firstname       String
-  lastname        String
-  gender          String
+  firstname       String?
+  lastname        String?
+  gender          String?
   dob             DateTime?     @db.Date @map(name: "date_of_birth")
   address         Address?
-  photo           String        @default("")
-  phone           String        @unique
+  photo           String?        @default("")
+  phone           String?        @unique
   whatsapp        String?
   email           String        @unique
   emailVerified   DateTime?     @map(name: "email_verified")
-  profileIsValid  Boolean       @default(false)
+  profileIsValid  Boolean?       @default(true)
   password        String
   role            UserRole      @default(PUBLIC)
   createdAt       DateTime      @default(now()) @map(name: "created_at")
   updatedAt       DateTime      @updatedAt @map(name: "updated_at")
   forms           Form[]
-
+  firstLogin      Boolean       @default(false)
+  sourcing        Candidature[]
   @@map(name: "users")
+}
+
+model Candidature {
+  id          Int    @id @default(autoincrement())
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int
+  form        Form    @relation(fields: [formId], references: [id])
+  formId      String
+  submitted   Boolean? @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([userId, formId])
+  @@map(name: "sourcing")
 }

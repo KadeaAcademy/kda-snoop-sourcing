@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../../lib/prisma";
-import { sendPasswordResetNotifyEmail } from "../../../../lib/email";
 import { verifyToken } from "../../../../lib/jwt";
 
 export default async function handle(
@@ -19,21 +18,33 @@ export default async function handle(
         where: {
           id: id,
         },
+        select: {
+          id: true,
+          emailVerified: true,
+          email: true
+        }
       });
+
       if (!user) {
-        return res.status(409).json({
-          error: "Jeton invalide fourni ou qui n'est plus valide",
+        return res.status(404).json({
+          error: "Aucun utilisateur trouvé avec cet ID",
         });
       }
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { password: hashedPassword }
-      })
-      await sendPasswordResetNotifyEmail(user)
-      res.json({});
+
+      const emailVerified = user.emailVerified || new Date().toISOString();
+      const updated = await prisma.user
+        .update({
+          where: { id: user.id },
+          data: { password: hashedPassword, emailVerified  },
+        })
+      // await sendPasswordResetNotifyEmail(user);
+      res.status(200).json({ updated, email: user.email });
+
+
     } catch (e) {
       return res.status(500).json({
         error: "Jeton invalide fourni ou qui n'est plus valide",
+        e,
       });
     }
   }

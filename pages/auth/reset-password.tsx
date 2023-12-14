@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import BaseLayoutUnauthorized from "../../components/layout/BaseLayoutUnauthorized";
 import { resetPassword } from "../../lib/users";
+import { signIn } from "next-auth/react";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -13,10 +14,16 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await resetPassword(token, e.target.elements.password.value);
+      const resetedPassword = await resetPassword(token, e.target.elements.password.value);
 
-      router.push("/auth/reset-password-success");
+
+      await signIn("credentials", {
+        callbackUrl: router.query.callbackUrl?.toString() || "/forms",
+        email: resetedPassword.email,
+        password: e.target.elements.password.value,
+      });
     } catch (e) {
+      console.log(e);
       setError(e.message);
     }
   };
@@ -63,29 +70,29 @@ export default function ResetPasswordPage() {
                   <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                       <label
-                        htmlFor="email"
+                        htmlFor="password"
                         className="block text-sm font-medium text-ui-gray-dark"
                       >
                         Nouveau mot de passe
                       </label>
-                      <div className="mt-1">
-                        <input
-                          id="password"
-                          name="password"
-                          type="password"
-                          required
-                          className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
-                        />
-                      </div>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        // onChange={(event) => setPassword(event.target.value)}
+                        className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
+                      />
+                      {/* <div className="mt-1">
+                      </div> */}
                     </div>
 
                     <div>
-                      <button
+                      <input
                         type="submit"
                         className="flex justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md shadow-sm bg-red hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                      >
-                        Réinitialiser le mot de passe
-                      </button>
+                        value="Réinitialiser le mot de passe"
+                      />
                     </div>
                   </form>
                 </div>

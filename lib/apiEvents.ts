@@ -189,9 +189,6 @@ export const processApiEvent = async (event: ApiEvent, formId, candidateId) => {
       handleWebhook(pipeline, event);
     } else if (pipeline.type === "AIRTABLE") {
       if (event.type !== "formOpened") {
-        const { dob: dateOfBirth, ...rest } = event['user'];
-        event['user'] = { ...rest, dob: dateOfBirth, dateOfBirth };
-        delete event['user'].dob;
         handleAirtable(pipeline, event);
       } else if (event.type === "formOpened" && userOpenFormSession === null) {
         handleAirtable(pipeline, event);

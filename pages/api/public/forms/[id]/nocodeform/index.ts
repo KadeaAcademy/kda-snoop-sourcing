@@ -12,9 +12,23 @@ export default async function handle(
   // GET /api/forms/:id/nocodeform
   // Get noCodeForm for a form with specific id
   if (req.method === "GET") {
-    const form = await prisma.noCodeForm.findUnique({
+    const userCandidature = await prisma.candidature.findFirst({
       where: {
-        formId: formId,
+        formId: `${formId}`,
+        userId: session?.user?.id
+      }, select: {
+        id: true
+      }
+    })
+
+    if (!userCandidature) return res.status(403).json("Vous n'avez pas droit à cette formation");
+
+    const form = await prisma.noCodeForm.findFirst({
+      where: {
+        formId: {
+          contains: `${formId}`,
+          mode: 'insensitive',
+        },
       },
       select: {
         id: true,

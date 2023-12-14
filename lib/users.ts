@@ -1,6 +1,6 @@
-import { hashPassword } from "./auth";
 import useSWR from "swr";
-import { fetcher } from "./utils";
+import {hashPassword} from "./auth";
+import {fetcher} from "./utils";
 
 export enum UserRoles {
   Public = "PUBLIC",
@@ -84,13 +84,15 @@ export const forgotPassword = async (email: string) => {
 
 export const resetPassword = async (token, password) => {
   const hashedPassword = await hashPassword(password);
+
   try {
+    
     const res = await fetch(`/api/public/users/reset-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        token,
-        hashedPassword,
+        token: token,
+        hashedPassword
       }),
     });
     if (res.status !== 200) {
@@ -143,10 +145,27 @@ export const updateUser = async (user, address) => {
     const data = await fetch(`/api/users/update`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({user, address}),
+      body: JSON.stringify({ user, address }),
     });
     return data;
   } catch (error) {
     console.error(error);
+  }
+};
+
+
+export const checkUserFirstLogin = async (id) => {
+  try {
+    const res = await fetch(`/api/public/users/${id}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (res.status !== 200) {
+      const json = await res.json();
+      throw Error(json.error);
+    }
+    return await res.json();
+  } catch (error) {
+     throw Error(`${error.message}`);
   }
 };
