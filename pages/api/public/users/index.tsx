@@ -26,7 +26,8 @@ export default async function handle(
     let password: string = "Kadea123";
 
     const hashedPassword = await hashPassword(password);
-    
+    let candidature;
+
 
     user = { ...user, ...{ email: user.email, password: hashedPassword } };
 
@@ -48,12 +49,12 @@ export default async function handle(
           ...user,
         },
       });
-      let candidature;
+
       if (userData && form) {
-         candidature = await prisma.candidature.create({
+        candidature = await prisma.candidature.create({
           data: {
-             user: { connect: { id: userData?.id } },
-             form: { connect: { id: form?.id } },
+            user: { connect: { id: userData?.id } },
+            form: { connect: { id: form?.id } },
             submitted: false,
           },
         });
@@ -83,8 +84,31 @@ export default async function handle(
             email: true
           }
         })
-        let candidature;
         if (foundUser && form) {
+          let existingCandidature = await prisma.candidature.findFirst({
+            where: {
+              AND: [
+                { formId: form.id },
+                { userId: foundUser.id }
+              ]
+            }, select: {
+              id: true
+            }
+          })
+
+          if (existingCandidature) return res.status(409).json({
+            error: `un utilisateur avec ${e.meta.target[0] === "email"
+              ? "cette adresse e-mail"
+              : "ce numéro de téléphone"
+              } existe déjà`,
+            message: "Compte existant",
+            errorCode: e.code,
+            code: res.statusCode,
+            formId: form.id,
+            id: foundUser.id,
+            email: foundUser.email,
+            token: encodeURIComponent(""),
+          });
           candidature = await prisma.candidature.create({
             data: {
               user: { connect: { id: foundUser?.id } },
@@ -92,19 +116,21 @@ export default async function handle(
               submitted: false,
             },
           });
+
+          return res.status(409).json({
+            error: `un utilisateur avec ${e.meta.target[0] === "email"
+              ? "cette adresse e-mail"
+              : "ce numéro de téléphone"
+              } existe déjà`,
+            message: "Compte existant",
+            errorCode: e.code,
+            code: res.statusCode,
+            formId: form.id,
+            id: foundUser.id,
+            email: foundUser.email,
+            token: encodeURIComponent(""),
+          });
         }
-        return res.status(409).json({
-          error: `un utilisateur avec ${e.meta.target[0] === "email"
-            ? "cette adresse e-mail"
-            : "ce numéro de téléphone"
-            } existe déjà`,
-          message: "Compte existant",
-          errorCode: e.code,
-          code: res.statusCode,
-          formId: form.id,
-          id: foundUser.id,
-          email: foundUser.email,
-        });
       } else {
         return res.status(500).json({
           error: e.message,
