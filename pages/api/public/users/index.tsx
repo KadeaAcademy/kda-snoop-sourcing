@@ -19,7 +19,7 @@ export default async function handle(
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
     let { user, trainingSession } = req.body;
-    const password = await hashPassword(publicRuntimeConfig.NEXTAUTH_SECRET);
+    const password = await hashPassword(publicRuntimeConfig.nextauthSecret);
 
     user = { ...user, ...{ email: user.email, password } };
 
