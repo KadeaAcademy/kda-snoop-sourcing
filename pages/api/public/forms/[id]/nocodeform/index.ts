@@ -14,7 +14,7 @@ export default async function handle(
   if (req.method === "GET") {
     const userCandidature = await prisma.candidature.findFirst({
       where: {
-        formId: `${formId}`,
+        formId: { equals: `${formId}`},
         userId: session?.user?.id
       }, select: {
         id: true
