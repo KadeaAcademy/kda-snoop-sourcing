@@ -2,13 +2,10 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 import { prisma } from "../../../../lib/prisma";
 import { UserRole } from "@prisma/client";
-import { sendVerificationEmail } from "../../../../lib/email";
 import getConfig from "next/config";
 import { capturePosthogEvent } from "../../../../lib/posthog";
 import { hashPassword } from "../../../../lib/auth";
 import { createToken } from "../../../../lib/jwt";
-
-
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -21,15 +18,10 @@ export default async function handle(
   // Required fields in body: email, password (hashed)
   // Optional fields in body: firstname, lastname
   if (req.method === "POST") {
-    let { user, callbackUrl, trainingSession } = req.body;  
+    let { user, trainingSession } = req.body;
+    const password = await hashPassword(publicRuntimeConfig.NEXTAUTH_SECRET);
 
-    let password: string = "Kadea123";
-
-    const hashedPassword = await hashPassword(password);
-    let candidature;
-
-
-    user = { ...user, ...{ email: user.email, password: hashedPassword } };
+    user = { ...user, ...{ email: user.email, password } };
 
     const form = await prisma.form.findFirst({
       where: {
@@ -43,6 +35,7 @@ export default async function handle(
     });
 
     // create user in database
+    let candidature = null;
     try {
       const userData = await prisma.user.create({
         data: {
@@ -75,7 +68,6 @@ export default async function handle(
 
     } catch (e) {
       if (e.code === "P2002") {
-
         let foundUser = await prisma.user.findUnique({
           where: {
             email: user.email
@@ -94,7 +86,7 @@ export default async function handle(
             }, select: {
               id: true
             }
-          })
+          });
 
           if (existingCandidature) return res.status(409).json({
             error: `un utilisateur avec ${e.meta.target[0] === "email"
