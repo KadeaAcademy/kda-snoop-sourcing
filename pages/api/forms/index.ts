@@ -21,12 +21,27 @@ export default async function handle(
   if (req.method === "GET") {
     let whereClause: FormWhereClause = {};
     const today = new Date();
+    let candidatures = null;
     today.setUTCHours(0, 0, 0, 0);
     if (session.user.role === UserRole.PUBLIC)
-      whereClause = {
-        dueDate: { gte: today },
-        noCodeForm: { published: true },
-      };
+      candidatures = await prisma.candidature.findMany({
+        where: {
+          userId: session.user.id,
+        },
+        select: {
+          formId: true,
+        },
+      });
+
+    const formIds = candidatures.map((candidature) => candidature.formId);
+
+    whereClause = {
+      id: {
+        in: formIds,
+      },
+      dueDate: { gte: today },
+      noCodeForm: { published: true },
+    };
 
     const formData = await prisma.form.findMany({
       where: whereClause,

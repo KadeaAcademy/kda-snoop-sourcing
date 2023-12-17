@@ -195,6 +195,7 @@ export type Submission = {
 };
 
 export type FormWhereClause = {
+  id?: any;
   noCodeForm?: any;
   dueDate?: any;
 };
