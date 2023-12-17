@@ -23,25 +23,23 @@ export default async function handle(
     const today = new Date();
     let candidatures = null;
     today.setUTCHours(0, 0, 0, 0);
-    if (session.user.role === UserRole.PUBLIC)
-      candidatures = await prisma.candidature.findMany({
-        where: {
-          userId: session.user.id,
-        },
-        select: {
-          formId: true,
-        },
-      });
-
-    const formIds = candidatures.map((candidature) => candidature.formId);
-
-    whereClause = {
-      id: {
-        in: formIds,
+    candidatures = await prisma.candidature.findMany({
+      where: {
+        userId: session.user.id,
       },
-      dueDate: { gte: today },
-      noCodeForm: { published: true },
-    };
+      select: {
+        formId: true,
+      },
+    });
+    const formIds = candidatures.map((candidature) => candidature.formId);
+    if (session.user.role === UserRole.PUBLIC)
+      whereClause = {
+        id: {
+          in: formIds,
+        },
+        dueDate: { gte: today },
+        noCodeForm: { published: true },
+      };
 
     const formData = await prisma.form.findMany({
       where: whereClause,
