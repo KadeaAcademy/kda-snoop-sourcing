@@ -93,6 +93,7 @@ model Form {
   submissionSessions                     SubmissionSession[]
   pipelines                              Pipeline[]
   noCodeForm                             NoCodeForm?
+  candidatures                           Candidature[]
 }
 
 model NoCodeForm {
@@ -170,6 +171,20 @@ model User {
   createdAt       DateTime      @default(now()) @map(name: "created_at")
   updatedAt       DateTime      @updatedAt @map(name: "updated_at")
   forms           Form[]
-
+  candidatures    Candidature[]
   @@map(name: "users")
+}
+
+model Candidature {
+  id              Int           @id @default(autoincrement())
+  user            User          @relation(fields: [userId], references: [id])
+  userId          Int
+  form            Form          @relation(fields: [formId], references: [id])
+  formId          String
+  submitted       Boolean?      @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([userId, formId])
+  @@map(name: "candidature")
 }
