@@ -22,12 +22,24 @@ export default async function handle(
     let whereClause: FormWhereClause = {};
     const today = new Date();
     today.setUTCHours(0, 0, 0, 0);
+    let candidatures = null;
+    candidatures = await prisma.candidature.findMany({
+      where: {
+        userId: session.user.id,
+      },
+      select: {
+        formId: true,
+      },
+    });
+    const formIds = candidatures.map((candidature) => candidature.formId);
     if (session.user.role === UserRole.PUBLIC)
       whereClause = {
+        id: {
+          in: formIds,
+        },
         dueDate: { gte: today },
         noCodeForm: { published: true },
       };
-
     const formData = await prisma.form.findMany({
       where: whereClause,
       // include: {
@@ -42,12 +54,12 @@ export default async function handle(
         name: true,
         place: true,
         noCodeForm: {
-          select:{
+          select: {
             id: true
           }
         }
       },
-      orderBy:{
+      orderBy: {
         dueDate: 'asc'
       }
     });
