@@ -2,6 +2,7 @@
 import BaseLayoutManagement from "../../../components/layout/BaseLayoutManagement";
 import { ClockIcon, CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { HiOutlineLocationMarker } from "react-icons/hi";
+import { BsHourglass } from "react-icons/bs";
 import withAuthentication from "../../../components/layout/WithAuthentication";
 import Loading from "../../../components/Loading";
 import MessagePage from "../../../components/MessagePage";
@@ -122,8 +123,8 @@ function NoCodeFormPublic() {
   const getDisclaimerMessage = (timer) => {
     return (
       <>
-        Tu es sur le point de commencer un formulaire chronométré
-        <li>Tu disposes de <b>{timer} minutes</b> pour remplir ce formulaire</li>
+        Tu es sur le point de commencer un test chronométré
+        <li>Tu disposes de <b>{timer} minutes</b> pour finir ce test</li>
         <li>
           Une fois commencé, <b>tu ne peux plus quitter le formulaire</b>, sous peine
           de voir tes réponses considérées comme soumises.
@@ -238,7 +239,7 @@ function NoCodeFormPublic() {
                         ) : numberOfAnsweredQuestions > 0 ? (
                           <EllipsisHorizontalCircleIcon className="text-orange-600 w-7 mr-2" />
                         ) : (
-                          <XCircleIcon className="text-red-800 w-7 mr-2" />
+                          <BsHourglass className="text-red-800 w-7 text-[1.25rem] mr-2" />
                         )}
                       </div>
                       <div
