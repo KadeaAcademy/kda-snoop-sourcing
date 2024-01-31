@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import {
   GlobeAltIcon,
   EnvelopeIcon,
@@ -48,6 +48,20 @@ const App: FC<IProps> = ({
 
     }
   };
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      return "Êtess-vous sur de vouloir quitter cette page ?  Les données saisies ne seront pas enregirstrées";
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("close", handleBeforeUnload);
+    window.addEventListener("popstate", handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.addEventListener("close", handleBeforeUnload);
+      window.addEventListener("popstate", handleBeforeUnload);
+    };
+  }, []);
 
   //TODO Find better way to handle this
   if (findTimer(page, startDate) < 0 && isTimedPage(page)) {
