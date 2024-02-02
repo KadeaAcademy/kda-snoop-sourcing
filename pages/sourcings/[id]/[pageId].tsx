@@ -101,6 +101,11 @@ function Form() {
     startFom();
   }
 
+  const currentIndex = pages.findIndex((page) => page.id === currentPage.id);
+
+  const nextIndex = (currentIndex + 1) % pages.length;
+
+  const nextPage = pages[nextIndex];
 
   return (
     <App
@@ -110,6 +115,7 @@ function Form() {
       startDate={startDate}
       id={""}
       localOnly={false}
+      nextPageId={nextPage.id}
     />
   );
 }

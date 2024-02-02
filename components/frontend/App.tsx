@@ -23,6 +23,7 @@ interface IProps {
   submission?: pageSubmissionEvent;
   localOnly: boolean;
   startDate: Date;
+  nextPageId?: string;
 }
 
 const App: FC<IProps> = ({
@@ -32,6 +33,7 @@ const App: FC<IProps> = ({
   submission,
   localOnly = false,
   startDate = new Date(),
+  nextPageId = "",
 }) => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [disabled, setDisabled] = useState<boolean>(false);
