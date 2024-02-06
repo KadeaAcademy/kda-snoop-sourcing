@@ -57,7 +57,7 @@ export default function SignInPage() {
             </div>
             <div className="mt-8">
               <div className="mt-6">
-                <p className="my-4 text-center">Bienvenu(e), connecte-toi à ton compte pour passer les tests à Kadea Academy</p>
+                <p className="my-4 text-center">Bienvenu(e), connecte-toi à ton compte pour passer les tests de Kadea Academy</p>
                 <form
                   onSubmit={handleSubmit}
                   method="post"
