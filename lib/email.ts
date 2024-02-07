@@ -21,14 +21,12 @@ export const sendEmail = async (emailData: sendEmailData) => {
       user: serverRuntimeConfig.smtpUser,
       pass: serverRuntimeConfig.smtpPassword,
     },
-    from: serverRuntimeConfig.mailFrom,
     // logger: true,
     // debug: true,
-  });
-  const emailDefaults = {
+  }, {
     from: `Kadea Academy <${ serverRuntimeConfig.mailFrom || serverRuntimeConfig.smtpUser }>`,
-  };
-  await transporter.sendMail({ ...emailDefaults, ...emailData });
+  });
+  await transporter.sendMail(emailData);
 };
 
 export const sendVerificationEmail = async (user, url = "/sourcings") => {
