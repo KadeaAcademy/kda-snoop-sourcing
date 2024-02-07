@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
                         />
                       </div>
                     </div>
-                    {emailVerified && <div>
+                    <div>
                       <label
                         htmlFor="email"
                         className="block text-sm font-medium text-ui-gray-dark"
@@ -106,7 +106,7 @@ export default function ResetPasswordPage() {
                           className="block w-full px-3 py-2 border rounded-md shadow-sm appearance-none placeholder-ui-gray-medium border-ui-gray-medium focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm ph-no-capture"
                         />
                       </div>
-                    </div>}
+                    </div>
                     <div>
                       <button
                         type="submit"
