@@ -37,7 +37,7 @@ const App: FC<IProps> = ({
   const [disabled, setDisabled] = useState<boolean>(false);
   const router = useRouter();
 
-  const onSubmit = (obj, error: boolean) => {    
+  const onSubmit = (obj, error: boolean) => {
     if (!error) {
       router.push(`/sourcings/${formId}`);
     } else {
@@ -49,18 +49,17 @@ const App: FC<IProps> = ({
     }
   };
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
+    window.addEventListener('beforeunload', (e) => {
       e.preventDefault();
-      return "Êtess-vous sur de vouloir quitter cette page ?  Les données saisies ne seront pas enregirstrées";
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener("close", handleBeforeUnload);
-    window.addEventListener("popstate", handleBeforeUnload);
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.addEventListener("close", handleBeforeUnload);
-      window.addEventListener("popstate", handleBeforeUnload);
-    };
+      confirm("Es-tu sur de vouloir quitter cette page ?  Les données saisies ne seront pas enregistrées");
+    });
+    window.addEventListener("popstate", (e) => {
+      if (confirm("Es-tu sur de vouloir quitter cette page ?  Les données saisies ne seront pas enregistrées")) {
+        return;
+      } else {
+        e.preventDefault();
+      }
+    });
   }, []);
 
   //TODO Find better way to handle this
