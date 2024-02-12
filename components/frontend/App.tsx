@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import {
   GlobeAltIcon,
   EnvelopeIcon,
@@ -37,7 +37,7 @@ const App: FC<IProps> = ({
   const [disabled, setDisabled] = useState<boolean>(false);
   const router = useRouter();
 
-  const onSubmit = (obj, error: boolean) => {    
+  const onSubmit = (obj, error: boolean) => {
     if (!error) {
       router.push(`/sourcings/${formId}`);
     } else {
@@ -48,6 +48,19 @@ const App: FC<IProps> = ({
 
     }
   };
+  useEffect(() => {
+    window.addEventListener('beforeunload', (e) => {
+      e.preventDefault();
+      confirm("Es-tu sûr de vouloir quitter cette page ? Tes réponses ne seront pas enregistrées");
+    });
+    window.addEventListener("popstate", (e) => {
+      if (confirm("Es-tu sûr de vouloir quitter cette page ? Tes réponses ne seront pas enregistrées")) {
+        return;
+      } else {
+        e.preventDefault();
+      }
+    });
+  }, []);
 
   //TODO Find better way to handle this
   if (findTimer(page, startDate) < 0 && isTimedPage(page)) {
