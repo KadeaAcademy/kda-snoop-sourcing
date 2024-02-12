@@ -51,10 +51,10 @@ const App: FC<IProps> = ({
   useEffect(() => {
     window.addEventListener('beforeunload', (e) => {
       e.preventDefault();
-      confirm("Es-tu sur de vouloir quitter cette page ?  Les données saisies ne seront pas enregistrées");
+      confirm("Es-tu sûr de vouloir quitter cette page ? Tes réponses ne seront pas enregistrées");
     });
     window.addEventListener("popstate", (e) => {
-      if (confirm("Es-tu sur de vouloir quitter cette page ?  Les données saisies ne seront pas enregistrées")) {
+      if (confirm("Es-tu sûr de vouloir quitter cette page ? Tes réponses ne seront pas enregistrées")) {
         return;
       } else {
         e.preventDefault();
