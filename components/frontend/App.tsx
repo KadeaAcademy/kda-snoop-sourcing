@@ -39,7 +39,7 @@ const App: FC<IProps> = ({
 
   const onSubmit = (obj, error: boolean) => {    
     if (!error) {
-      router.push(`/sourcings/${formId}`);
+      router.push(`/sourcings/${formId}?scrollTo=form-description`);
     } else {
       toast.error(
         "Une erreur s'est produite, surement un champ obligatoire non remplit ou une erreur de connexion. veuillez ressayer",
