@@ -69,7 +69,7 @@ export default function SignInPage() {
                       htmlFor="email"
                       className="block text-sm font-medium text-ui-gray-dark"
                     >
-                      Adresse E-mail
+                      Identifiant : Adresse E-mail
                     </label>
                     <div className="mt-1">
                       <input
