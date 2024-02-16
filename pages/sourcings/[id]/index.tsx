@@ -239,7 +239,7 @@ function NoCodeFormPublic() {
                         ) : numberOfAnsweredQuestions > 0 ? (
                           <EllipsisHorizontalCircleIcon className="text-orange-600 w-7 mr-2" />
                         ) : (
-                          <BsHourglass className="text-red-800 w-7 text-[1.25rem] mr-2" />
+                          <BsHourglass className="text-gray-800 w-7 text-[1.25rem] mr-2" />
                         )}
                       </div>
                       <div
