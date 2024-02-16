@@ -5,11 +5,13 @@ import Link from "next/link";
 import { classNames } from "../../lib/utils";
 import MenuProfile from "./MenuProfile";
 import MenuSteps from "./MenuSteps";
+
 import { useRouter } from "next/router";
 import Loading from "../Loading";
 import { SiGooglemessages } from "react-icons/si";
 import { SiWhatsapp } from "react-icons/si";
 import { ImMail4 } from "react-icons/im";
+
 
 interface BaseLayoutManagementProps {
   title: string;
@@ -37,6 +39,7 @@ export default function BaseLayoutManagement({
     { id: "forms", name: "Sourcings", href: "/" },
     { id: "users", name: "Gestion d'utilisateurs", href: "/users" },
   ];
+
   const router = useRouter();
   const { asPath } = router;
   if (!user.profileIsValid) {
