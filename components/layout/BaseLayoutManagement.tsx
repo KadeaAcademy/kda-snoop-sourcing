@@ -7,9 +7,14 @@ import MenuProfile from "./MenuProfile";
 import MenuSteps from "./MenuSteps";
 import { useRouter } from "next/router";
 import Loading from "../Loading";
-import { SiGooglemessages } from "react-icons/si";
-import { SiWhatsapp } from "react-icons/si";
-import { ImMail4 } from "react-icons/im";
+import img from "../../public/img/prochaine-promotion.webp";
+import { IoLogoWhatsapp } from "react-icons/io";
+import { MdPermPhoneMsg } from "react-icons/md";
+import { IoMdMail } from "react-icons/io";
+
+
+
+
 
 interface BaseLayoutManagementProps {
   title: string;
@@ -21,6 +26,30 @@ interface BaseLayoutManagementProps {
   bgClass?: string;
   limitHeightScreen?: boolean;
 }
+
+const footer_links = [
+  {
+    title: "Kinshasa",
+    address: " n° 63, Av Colonel Mondjiba, C/Ngaliema. Concession Cotex, Silikin Village",
+    phone: "243810927272",
+    displayedPhone: "0810 927 272",
+    maps: "https://maps.app.goo.gl/ihzxmn1q8xXdkxUe6"
+  },
+  {
+    title: "Goma",
+    address: "Blvd Kanyamuhanga, Immeuble Diplomate 3ème étage, à côté de BDGL",
+    phone: "243838000004",
+    displayedPhone: "0838 000 004",
+    maps:"https://maps.app.goo.gl/E1odPVaUfNayi46u7"
+  },
+  {
+    title: "Lubumbashi",
+    address: "n°9, Av Fatuma, Q/ Golf les battants, C/ Annexe",
+    phone: "243830655560",
+    displayedPhone: "0830 655 560",
+    maps:"https://maps.app.goo.gl/zH43STac46ytGSoA9"
+  },
+]
 
 export default function BaseLayoutManagement({
   title,
@@ -113,136 +142,84 @@ export default function BaseLayoutManagement({
 
           <div className="flex flex-col w-full">{children}</div>
 
-          <footer className="w-full self-end bg-red  items-center py-6 ">
-            <div className=" mx-auto 2xl:max-w-screen-xl xl:max-w-screen-lg lg:px-10">
-              <div className=" mb-4 flex flex-col  justify-between items-center ">
+          <footer className="flex w-full self-end bg-red  items-center px-3 mx-6 rounded-t-md shadow-md">
+            
+            <div className=" w-[20%] flex justify-center items-center ">
+              <Image
+              src={img}
+              alt="Kadea  academy logo"
+              width={220}
+              height={247}
+              className=" h-full"
+              />
+
+            </div>
+
+            <div className="  w-full pl-8 pr-4">
+              <div className=" flex items-center gap-3 bg-white rounded-full px-9 justify-center py-2 my-4">
                 <Link href="/forms/">
-                  <a className="text-ui-gray-dark hover:text-ui-gray-dark">
                     <Image
-                      src="/img/logo-white.webp"
+                      src="/img/kadea_logo.png"
                       alt="Kadea  academy logo"
-                      width={140}
-                      height={30}
+                      width={185}
+                      height={33}
                     />
-                  </a>
                 </Link>
 
-                <p className=" text-white text-xs">
+                <p className=" text-black-800 font-semibold text-base">
                   Une formation qui change une vie.
                 </p>
+
               </div>
+                <p className="text-white text-sm text-center mb-2">Pour toute préoccupation, n'hésites pas à contacter l'équipe chargée des admissions</p>
 
-              <hr className=" opacity-50" />
+              <hr className=" opacity-50 mb-2" />
 
-              <div className="flex items-start justify-between text-center py-8">
+              <div className="flex items-start justify-between text-center gap-6 pb-6">
+
+                {footer_links.map((element) => (
+                  // <div></div>
                 <div className=" text-left w-1/3">
-                  <h3 className=" text-white font-medium uppercase mb-2 text-lg">
-                    Kinshasa
+                  <h3 className=" text-white font-bold mb-2 text-lg">
+                    {element.title}
                   </h3>
-                  <h3 className=" text-white font-normal text-sm">
-                    N° 63, Ave Colonel Mondjiba, Silikin Village, <br />
-                    Concession COTEX, Kinshasa
-                  </h3>
-                  <div className=" flex gap-2 text-white text-xl">
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="sms:+243810927272&body=En quoi pouvons-nous vous aider ?"
-                      >
-                        <SiGooglemessages />
-                      </a>
-                    </address>
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="https://wa.me/243810927272"
-                      >
-                        <SiWhatsapp />
-                      </a>
-                    </address>
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="mailto:admissions@kadea.co"
-                      >
-                        <ImMail4 />
-                      </a>
-                    </address>
-                  </div>
-                </div>
 
-                <div className=" text-center w-1/3">
-                  <h3 className=" text-white font-medium uppercase mb-2 text-lg">
-                    Goma
-                  </h3>
-                  {/* <h3 className=" text-white font-normal text-sm">
-                    N° 63, Ave Colonel Mondjiba, Silikin Village, <br />
-                    Concession COTEX, Kinshasa
-                  </h3> */}
-                  <div className=" flex gap-2 text-white text-xl justify-center">
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="sms:+243838000004&body=En quoi pouvons-nous vous aider ?"
-                      >
-                        <SiGooglemessages />
-                      </a>
-                    </address>
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="https://wa.me/243838000004"
-                      >
-                        <SiWhatsapp />
-                      </a>
-                    </address>
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="mailto:admissions@kadea.co"
-                      >
-                        <ImMail4 />
-                      </a>
-                    </address>
-                  </div>
-                </div>
+                  <h3 className=" text-white text-sm font-light">
+                    <a href={`${element.maps}`} target="_blank">
 
-                <div className=" text-right w-1/3">
-                  <h3 className=" text-white font-medium uppercase mb-2 text-lg">
-                    Lubumbashi
+                  <span className="font-bold"> Adresse :</span> {element.address}
+                    </a>
                   </h3>
-                  {/* <h3 className=" text-white font-normal text-sm">
-                    N° 63, Ave Colonel Mondjiba, Silikin Village, <br />
-                    Concession COTEX, Kinshasa
-                  </h3> */}
-                  <div className=" flex gap-2 items-end justify-end text-white text-xl">
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="sms:+243830655560&body=En quoi pouvons-nous vous aider ?"
-                      >
-                        <SiGooglemessages />
-                      </a>
-                    </address>
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="https://wa.me/243830655560"
-                      >
-                        <SiWhatsapp />
-                      </a>
-                    </address>
-                    <address>
-                      <a
-                        className="text-center py-4 lg:text-left text-white"
-                        href="mailto:admissions@kadea.co"
-                      >
-                        <ImMail4 />
-                      </a>
-                    </address>
+
+                  <div className="flex text-white gap-5 mt-3">
+                    <h3 className="text-white text-sm mt-2">
+                      <span className="font-bold">Téléphone : </span> <a href={`tel:+${element.phone}`} target="_blank" >{element.displayedPhone}</a>
+                      </h3>
+                    
                   </div>
+
+                  <div className="flex text-white text-3xl gap-5 mt-3">
+
+                      <a href={`tel:+${element.phone}`} className=" ">
+                        <MdPermPhoneMsg/>
+                      </a>
+
+                    <a href={`https://wa.me/${element.phone}`} target="_blank" >
+                    <IoLogoWhatsapp/>
+                    </a>
+                    <a href={`mailto:admissions@kadea.co`} target="_blank" >
+                    <IoMdMail/>
+                    </a>
+
+                  </div>
+                  
                 </div>
+                ))}
+
+                
               </div>
+
+              {/* <hr className=" opacity-50 my-3" /> */}
             </div>
           </footer>
         </div>
