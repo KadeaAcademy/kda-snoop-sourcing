@@ -49,6 +49,17 @@ function NoCodeFormPublic() {
   const [pageIdOnModal, setPageIdOnModal] = useState("");
   const [roll, setRoll] = useState();
 
+  const scrollToForm = (elementId) => {
+    const element = document.getElementById(elementId);
+    if (element) {
+      const elementPosition = element.getBoundingClientRect().top;
+      window.scrollTo({
+        top: window.scrollY + elementPosition + 300,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   enum options {
     year = "numeric",
     month = "long",
@@ -59,7 +70,7 @@ function NoCodeFormPublic() {
       await fetch(`/api/forms/${formId}/open`, {
         method: "POST",
       });
-    } catch (error) {}
+    } catch (error) { }
   };
 
   useEffect(() => {
@@ -69,6 +80,14 @@ function NoCodeFormPublic() {
   useEffect(() => {
     setRoll(candidateRoll);
   }, [candidateRoll]);
+
+  useEffect(() => {
+    const { query } = router;
+    const { scrollTo } = query;
+    if (scrollTo) {
+      scrollToForm(scrollTo);
+    }
+  }, [router.query]);
 
   if (isLoadingNoCodeForm) {
     return <Loading />;
@@ -135,7 +154,7 @@ function NoCodeFormPublic() {
       </>
     );
   };
-  
+
   return (
     <BaseLayoutManagement
       title={"Forms - Kadea Sourcing"}
@@ -201,6 +220,7 @@ function NoCodeFormPublic() {
               )}
 
               <div
+                id="form-description"
                 className="text-sm mb-3 ml-12  mr-11 form-description"
                 dangerouslySetInnerHTML={{
                   __html: noCodeForm.form.description,
@@ -222,8 +242,8 @@ function NoCodeFormPublic() {
                   numberOfAnsweredQuestions = !pageSubmission?.data?.submission
                     ? 0
                     : Object.values(pageSubmission?.data?.submission).filter(
-                        (v) => v
-                      ).length;
+                      (v) => v
+                    ).length;
                 }
                 if (pages.length - 1 !== index)
                   return (
@@ -233,19 +253,18 @@ function NoCodeFormPublic() {
                     >
                       <div className="pl-12 flex items-center max-md:pl-6 max-md:pb-2">
                         {pageIsCompleted(page.id) ||
-                        (!isTimedPage(page) &&
-                          numberOfQuestions === numberOfAnsweredQuestions) ? (
+                          (!isTimedPage(page) &&
+                            numberOfQuestions === numberOfAnsweredQuestions) ? (
                           <CheckCircleIcon className="text-green-800 w-7 mr-2" />
                         ) : numberOfAnsweredQuestions > 0 ? (
                           <EllipsisHorizontalCircleIcon className="text-orange-600 w-7 mr-2" />
                         ) : (
-                          <BsHourglass className="text-gray-800 w-7 text-[1.25rem] mr-2" />
+                          <BsHourglass className="text-red-800 w-7 text-[1.25rem] mr-2" />
                         )}
                       </div>
                       <div
-                        className={`pl-12 ${
-                          isTimedPage(page) ? "pl-16" : "pl-8"
-                        } flex items-center max-sm:pl-6 max-sm:pr-6 max-sm:pb-5 max-md:pb-5 max-sm:font-semibold max-md:font-semibold max-md:pl-6 max-md:pr-6  max-md:w-5/5 md:w-2/5`}
+                        className={`pl-12 ${isTimedPage(page) ? "pl-16" : "pl-8"
+                          } flex items-center max-sm:pl-6 max-sm:pr-6 max-sm:pb-5 max-md:pb-5 max-sm:font-semibold max-md:font-semibold max-md:pl-6 max-md:pr-6  max-md:w-5/5 md:w-2/5`}
                       >
                         {page.length ? "" : page.blocks[0].data.text}
                       </div>

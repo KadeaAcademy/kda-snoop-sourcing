@@ -39,7 +39,7 @@ const App: FC<IProps> = ({
 
   const onSubmit = (obj, error: boolean) => {
     if (!error) {
-      router.push(`/sourcings/${formId}`);
+      router.push(`/sourcings/${formId}?scrollTo=form-description`);
     } else {
       toast.error(
         "Une erreur s'est produite, surement un champ obligatoire non remplit ou une erreur de connexion. veuillez ressayer",
@@ -103,9 +103,9 @@ const App: FC<IProps> = ({
               key={block.id}
               className={`${
                 block.type === "submitButton" ? "" : "bg-white"
-              } px-5 py-5 ${
+                } px-5 py-5 ${
                 /Question/.test(block.type) ? "mb-6 rounded-b-md" : ""
-              }`}
+                }`}
             >
               {block.type === "paragraph" ? (
                 <p
