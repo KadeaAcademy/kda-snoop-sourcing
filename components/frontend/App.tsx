@@ -37,7 +37,7 @@ const App: FC<IProps> = ({
   const [disabled, setDisabled] = useState<boolean>(false);
   const router = useRouter();
 
-  const onSubmit = (obj, error: boolean) => {    
+  const onSubmit = (obj, error: boolean) => {
     if (!error) {
       router.push(`/sourcings/${formId}`);
     } else {
