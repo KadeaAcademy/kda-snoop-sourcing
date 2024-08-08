@@ -95,48 +95,49 @@ export default function DownloadResponses({ formId, candidates }) {
             createdAt: undefined,
           };
           const candidateSubmission = await getUserSubmissions(id);
-          dataEntry["createdAt"] = candidateSubmission[0]?.createdAt;
+          if (candidateSubmission !== undefined && candidateSubmission.length > 0) {
+            dataEntry["createdAt"] = candidateSubmission[0]?.createdAt;
+            if (candidateSubmission.length) {
+              candidateSubmission.map((event) => {
+                const pageSubmissions = {};
+                if (event.data["submission"] && pagesFormated[event.data["pageName"]]) {
+                  Object.keys(event.data["submission"]).map((key) => {
+                    const question =
+                      pagesFormated[event.data["pageName"]].blocks[key]?.data
+                        .label;
+                    const response = event.data["submission"][key];
+                    pageSubmissions[question] = response;
+                  });
+                }
+                dataEntry[
+                  pagesFormated[event.data["pageName"]]?.title
+                ] = pageSubmissions;
 
-          if (candidateSubmission.length) {
-            candidateSubmission.map((event) => {
-              const pageSubmissions = {};
-              if (event.data["submission"]) {
-                Object.keys(event.data["submission"]).map((key) => {
-                  const question =
-                    pagesFormated[event.data["pageName"]].blocks[key]?.data
-                      .label;
-                  const response = event.data["submission"][key];
-                  pageSubmissions[question] = response;
-                });
-              }
-              dataEntry[
-                pagesFormated[event.data["pageName"]].title
-              ] = pageSubmissions;
-
-              const isFieldExist = data.findIndex(
-                (item) => email === item.email
-              );
-              const isCandidateExist = data.findIndex(
-                (item) => email === item.email
-              );
-              if (isFieldExist === -1) {
-                fields.push({
-                  label: pagesFormated[event.data["pageName"]].title,
-                  value: pagesFormated[event.data["pageName"]].title,
-                });
-              }
-              if (isCandidateExist !== -1) {
-                data[isCandidateExist] = dataEntry;
-              } else {
-                data.push(dataEntry);
-              }
-            });
+                const isFieldExist = data.findIndex(
+                  (item) => email === item.email
+                );
+                const isCandidateExist = data.findIndex(
+                  (item) => email === item.email
+                );
+                if (isFieldExist === -1) {
+                  fields.push({
+                    label: pagesFormated[event.data["pageName"]]?.title,
+                    value: pagesFormated[event.data["pageName"]]?.title,
+                  });
+                }
+                if (isCandidateExist !== -1) {
+                  data[isCandidateExist] = dataEntry;
+                } else {
+                  data.push(dataEntry);
+                }
+              });
+            }
           }
         }
       )
     );
 
-    const opts: any = { fields };
+    const opts: any = fields;
 
     if (format === "excel") {
       opts.excelStrings = true;
@@ -203,9 +204,8 @@ export default function DownloadResponses({ formId, candidates }) {
               {({ active }) => (
                 <button
                   onClick={() => download("csv")}
-                  className={`${
-                    active ? "bg-red-500 text-white" : "text-gray-900"
-                  } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                  className={`${active ? "bg-red-500 text-white" : "text-gray-900"
+                    } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                 >
                   Download as CSV
                 </button>
